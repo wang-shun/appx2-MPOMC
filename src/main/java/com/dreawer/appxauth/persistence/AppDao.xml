@@ -30,7 +30,7 @@
         VALUES (
         #{id}
         ,#{appid}
-        ,#{oid}
+        ,#{organizationId}
         ,#{openid}
         ,#{sessionKey}
         ,#{createTime}
