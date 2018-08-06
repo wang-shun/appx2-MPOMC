@@ -106,7 +106,8 @@ public class AuthController extends BaseController {
         //如果该小程序用户在该企业未注册
         if (application == null) {
             String response = appManager.wxLogin(appid, code);
-            logger.debug(response);
+            System.out.println("=====================================" + response);
+            logger.info("=======================" + response);
             JSONObject jsonObject = new JSONObject(response);
             String openId = (String) jsonObject.get("openid");
             String sessionKey = (String) jsonObject.get("session_key");
