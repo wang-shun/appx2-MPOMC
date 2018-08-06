@@ -86,7 +86,7 @@ public class AuthController extends BaseController {
      * @return
      * @throws IOException
      */
-    @GetMapping("/sns")
+    @PostMapping("/sns")
     @ResponseBody
     public ResponseCode getOpenId(@RequestBody @Valid WxLoginForm form, BindingResult result
     ) throws IOException {
