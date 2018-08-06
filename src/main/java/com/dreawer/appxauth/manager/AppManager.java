@@ -14,7 +14,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +38,9 @@ public class AppManager {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     /**
      * 获取用户小程序authorizerAccessToken
@@ -319,7 +326,18 @@ public class AppManager {
         param.put("mugshot", mugshot);
         param.put("petName", petName);
         param.put("appId", appid);
-        return Okhttp.postSyncJson(ThirdParty.REQ_SIGNUP_WXAPP, param);
+        //return Okhttp.postSyncJson(ThirdParty.REQ_SIGNUP_WXAPP, param);
+        return restPost(ThirdParty.REQ_SIGNUP_WXAPP, param, null);
+    }
+
+    /**
+     * 注册小程序用户到用户中心
+     *
+     * @return
+     */
+    public String getAuthorization(Map map) throws IOException {
+        //return Okhttp.postSyncJson(ThirdParty.REQ_SIGNUP_WXAPP, param);
+        return restPost(ThirdParty.REQ_LOGIN_WXAPP, map, null);
     }
 
 
@@ -329,5 +347,18 @@ public class AppManager {
 //        Okhttp.postSyncJson()
 //    }
 
+
+    public String restPost(String url, Object data, String userId) {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.set("userId", userId);
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        HttpEntity<String> entity = new HttpEntity<String>(json, headers);
+        String response = restTemplate.postForObject(url, entity, String.class);
+        System.out.println(response);
+        return response;
+    }
 
 }

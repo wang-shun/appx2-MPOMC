@@ -140,7 +140,8 @@ public class AuthController extends BaseController {
             String id = application.getId();
             Map<String, Object> param = new HashMap<>();
             param.put("userId", id);
-            String response = Okhttp.postSyncJson("/login/wxapp", param);
+            String response = appManager.getAuthorization(param);
+            //String response = Okhttp.postSyncJson("/login/wxapp", param);
             JSONObject info = new JSONObject(response);
             if (!info.get("code").equals("000000")) {
                 return Error.APPSERVER;
