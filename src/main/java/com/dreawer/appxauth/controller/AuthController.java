@@ -9,6 +9,7 @@ import com.dreawer.appxauth.lang.AppType;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.manager.AppManager;
+import com.dreawer.appxauth.manager.ServiceManager;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.service.ApplicationService;
@@ -51,6 +52,10 @@ public class AuthController extends BaseController {
 
     @Autowired
     AppManager appManager;
+
+    @Autowired
+    ServiceManager serviceManager;
+
     @Autowired
     private UserCaseService userCaseService;
     @Autowired
@@ -124,7 +129,7 @@ public class AuthController extends BaseController {
 
 
             //在用户中心注册
-            String userInfo = appManager.signUp(petName, oid, mugshot);
+            String userInfo = serviceManager.signUp(petName, oid, mugshot);
             JSONObject info = new JSONObject(userInfo);
             logger.debug(info);
             if (!info.get("code").equals("000000")) {
@@ -146,7 +151,7 @@ public class AuthController extends BaseController {
             String id = application.getId();
             Map<String, Object> param = new HashMap<>();
             param.put("userId", id);
-            String response = appManager.getAuthorization(param);
+            String response = serviceManager.getAuthorization(param);
             //String response = Okhttp.postSyncJson("/login/wxapp", param);
             JSONObject info = new JSONObject(response);
             if (!info.get("code").equals("000000")) {

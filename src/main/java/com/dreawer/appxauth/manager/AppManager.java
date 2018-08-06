@@ -317,53 +317,6 @@ public class AppManager {
         return Okhttp.getSync(ThirdParty.URL_WX_LOGIN(appid, jsCode));
     }
 
-    /**
-     * 注册小程序用户到用户中心
-     *
-     * @param petName
-     * @param appid
-     * @param mugshot
-     * @return
-     */
-    public String signUp(String petName, String appid, String mugshot) throws IOException {
-        Map<String, Object> param = new HashMap<>();
-        param.put("mugshot", mugshot);
-        param.put("petName", petName);
-        param.put("appId", appid);
-        //return Okhttp.postSyncJson(ThirdParty.REQ_SIGNUP_WXAPP, param);
-        return restPost(ThirdParty.REQ_SIGNUP_WXAPP, param, null);
-    }
 
-    /**
-     * 注册小程序用户到用户中心
-     *
-     * @return
-     */
-    public String getAuthorization(Map map) throws IOException {
-        //return Okhttp.postSyncJson(ThirdParty.REQ_SIGNUP_WXAPP, param);
-        return restPost(ThirdParty.REQ_LOGIN_WXAPP, map, null);
-    }
-
-
-//    public String signIn(String userId){
-//        Map<String,Object> param  = new HashMap<>();
-//        param.put("userId",userId);
-//        Okhttp.postSyncJson()
-//    }
-
-
-    public String restPost(String url, Object data, String userId) {
-        HttpHeaders headers = new HttpHeaders();
-        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.setContentType(type);
-        headers.set("userId", userId);
-        Gson gson = new Gson();
-        String json = gson.toJson(data);
-        logger.info(json);
-        HttpEntity<String> entity = new HttpEntity<String>(json, headers);
-        String response = restTemplate.postForObject(url, entity, String.class);
-        logger.info(response);
-        return response;
-    }
 
 }
