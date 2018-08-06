@@ -17,6 +17,7 @@ import com.dreawer.appxauth.service.UserCaseService;
 import com.dreawer.appxauth.utils.Okhttp;
 import com.dreawer.responsecode.rcdt.*;
 import com.dreawer.responsecode.rcdt.Error;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,6 +43,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/auth")
 public class AuthController extends BaseController {
+    private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
+
 
     @Autowired
     private AuthService authService;
@@ -103,6 +106,7 @@ public class AuthController extends BaseController {
         //如果该小程序用户在该企业未注册
         if (application == null) {
             String response = appManager.wxLogin(appid, code);
+            logger.debug(response);
             JSONObject jsonObject = new JSONObject(response);
             String openId = (String) jsonObject.get("openid");
             String sessionKey = (String) jsonObject.get("session_key");
@@ -119,7 +123,7 @@ public class AuthController extends BaseController {
 
 
             //在用户中心注册
-            String userInfo = appManager.signUp(petName, oid, mugshot);
+            String userInfo = appManager.signUp(petName, appid, mugshot);
             JSONObject info = new JSONObject(userInfo);
             logger.debug(info);
             if (!info.has("id") || !info.get("code").equals("000000")) {

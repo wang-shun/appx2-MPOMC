@@ -355,6 +355,7 @@ public class AppManager {
         headers.set("userId", userId);
         Gson gson = new Gson();
         String json = gson.toJson(data);
+        System.out.println(json);
         HttpEntity<String> entity = new HttpEntity<String>(json, headers);
         String response = restTemplate.postForObject(url, entity, String.class);
         System.out.println(response);
