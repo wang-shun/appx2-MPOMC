@@ -20,7 +20,7 @@ public class AppDao extends MyBatisBaseDao<Application> {
         Map<String, String> param = new HashMap<>();
         param.put("appid", appid);
         param.put("organizationId", organizationId);
-        return selectOne("findByAppidAndOrganizationId", appid);
+        return selectOne("findByAppidAndOrganizationId", param);
     }
 
     public void save(Application application) {
