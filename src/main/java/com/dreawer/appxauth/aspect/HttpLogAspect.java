@@ -23,7 +23,7 @@ public class HttpLogAspect {
 //    @AfterReturning(returning = "ret", pointcut = "execution(* com.dreawer.appxauth.utils.Okhttp.*(..))")
 //    public void doAfterReturning(Object ret){
 //        // 处理完请求，返回内容
-//        System.out.println(ret+"+===");
+//        logger.info(ret+"+===");
 //        log.debug("========================\r\n"+"http response : " + ret+"\r\n========================");
 //    }
 }

@@ -3,6 +3,7 @@ package com.dreawer.appxauth.utils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,6 +17,9 @@ import java.util.Map;
  */
 @Slf4j
 public class Okhttp {
+
+    private static Logger logger = Logger.getLogger(Okhttp.class); // 日志记录器
+
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -144,7 +148,7 @@ public class Okhttp {
         // 将response转化成String
         String responseStr = response.body().string();
         log.debug("http response :" + responseStr);
-        System.out.println("http response :" + responseStr);
+        logger.info("http response :" + responseStr);
         return responseStr;
 
     }
@@ -169,7 +173,7 @@ public class Okhttp {
         // 将response转化成String
         String responseStr = response.body().string();
         log.debug("http response :" + responseStr);
-        System.out.println("http response :" + responseStr);
+        logger.info("http response :" + responseStr);
         return responseStr;
 
     }

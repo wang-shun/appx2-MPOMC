@@ -9,6 +9,7 @@ import com.dreawer.appxauth.utils.Okhttp;
 import com.dreawer.appxauth.utils.RedisUtils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,6 +27,9 @@ import static com.dreawer.appxauth.consts.ThirdParty.*;
 
 @Slf4j
 public class TokenManager {
+
+    private static Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
+
 
     private static final String REDIS_PREFIX = "redis_";
 
@@ -67,16 +71,16 @@ public class TokenManager {
         params.put(COMPONENT_APPSECRET, ThirdParty.APPSECRT());
         params.put(COMPONENT_VERIFY_TICKET, getVerifyTicket());
         String response = Okhttp.postSyncJson(ThirdParty.URL_GET_BASIC_TOKEN(), params);
-        System.out.println(response);
+        logger.info(response);
         Component_access_token token = new Gson().fromJson(response, Component_access_token.class);
         String accessToken = token.getComponent_access_token();
         Integer expiresIn = Integer.parseInt(token.getExpires_in());
         //防止刷新时间差,在token失效前半小时删除该记录
         expiresIn = expiresIn - 60 * 30;
-        System.out.println("到期时间" + expiresIn);
+        logger.info("到期时间" + expiresIn);
         //accessToken失效时间为1.5小时,之后会重新刷新
         redisUtils.set(REDIS_PREFIX + COMPONENT_ACCESS_TOKEN, accessToken, expiresIn);
-        System.out.println("刷新token成功" + COMPONENT_ACCESS_TOKEN);
+        logger.info("刷新token成功" + COMPONENT_ACCESS_TOKEN);
         return accessToken;
     }
 
@@ -90,7 +94,7 @@ public class TokenManager {
         //防止刷新时间差,在token失效前半小时删除该记录
         expiresIn = expiresIn - 60 * 5;
         //accessToken失效时间为5分钟,之后会重新刷新
-        System.out.println("到期时间" + expiresIn);
+        logger.info("到期时间" + expiresIn);
         redisUtils.set(REDIS_PREFIX + PRE_AUTH_CODE, pre_auth_code, expiresIn);
         return pre_auth_code;
     }

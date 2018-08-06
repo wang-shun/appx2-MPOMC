@@ -10,6 +10,7 @@ import com.dreawer.appxauth.utils.Okhttp;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,9 @@ import java.util.Map;
 @Slf4j
 @Component
 public class AppManager {
+
+    private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
+
 
     @Autowired
     private AuthService authService;
@@ -355,10 +359,10 @@ public class AppManager {
         headers.set("userId", userId);
         Gson gson = new Gson();
         String json = gson.toJson(data);
-        System.out.println(json);
+        logger.info(json);
         HttpEntity<String> entity = new HttpEntity<String>(json, headers);
         String response = restTemplate.postForObject(url, entity, String.class);
-        System.out.println(response);
+        logger.info(response);
         return response;
     }
 
