@@ -130,6 +130,7 @@ public class AuthController extends BaseController {
             application = new Application();
             application.setAppid(appid);
             application.setOpenid(openId);
+            application.setOrganizationId(oid);
             application.setSessionKey(sessionKey);
             application.setCreateTime(getNow());
             application.setId(id);
