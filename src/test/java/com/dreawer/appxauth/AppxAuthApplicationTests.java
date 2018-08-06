@@ -99,4 +99,6 @@ public class AppxAuthApplicationTests {
         System.out.println(authorizeInfo.toString());
         System.out.println(authorizeInfo.getAuthorization_info().getAuthorizer_access_token());
     }
+
+
 }

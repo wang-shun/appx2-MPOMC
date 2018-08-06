@@ -113,7 +113,7 @@ public class AuthController extends BaseController {
             String sessionKey = (String) jsonObject.get("session_key");
 
             //获取用户昵称和头像
-            String data = decrypt(encryptedData, sessionKey, iv, "UTF-8");
+            String data = decrypt(encryptedData, sessionKey, iv);
             JSONObject userObject = new JSONObject(data);
             if (userObject == null || !userObject.has("nickName")) {
                 return MessageError.UNPACK;
