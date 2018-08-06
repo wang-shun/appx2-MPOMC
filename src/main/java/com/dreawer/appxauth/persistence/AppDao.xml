@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dreawer.appxauth.domain.Application">
+
+    <!-- ================================================================================== -->
+    <!-- SQL查询																				-->
+    <!-- ================================================================================== -->
+
+    <select id="findByAppidAndOrganizationId" parameterType="Map" resultMap="ApplicationResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM
+        application
+        WHERE
+        appid = #{appid}
+        AND
+        oid = #{organizationId}
+    </select>
+
+    <!-- ================================================================================== -->
+    <!-- SQL插入																-->
+    <!-- ================================================================================== -->
+
+    <insert id="save" parameterType="Application">
+        INSERT INTO
+        application(
+        <include refid="basicFields"/>
+        )
+        VALUES (
+        #{id}
+        ,#{appid}
+        ,#{oid}
+        ,#{openid}
+        ,#{sessionKey}
+        ,#{createTime}
+        )
+    </insert>
+
+    <!-- ================================================================================== -->
+    <!-- 公用SQL定义																			-->
+    <!-- ================================================================================== -->
+
+    <!-- 基本信息 -->
+    <sql id="basicFields">
+        id
+        , appid
+        , oid
+        , open_id
+        , session_key
+        , cre_tim
+    </sql>
+
+    <!-- ================================================================================== -->
+    <!-- 结果集映射																				-->
+    <!-- ================================================================================== -->
+    <resultMap id="ApplicationResultMap" type="com.dreawer.appxauth.domain.Application">
+        <result property="id" column="id"/>
+        <result property="appid" column="appid"/>
+        <result property="oid" column="organizationId"/>
+        <result property="open_id" column="openid"/>
+        <result property="session_key" column="sessionKey"/>
+        <result property="createTime" column="cre_tim"/>
+    </resultMap>
+
+</mapper>

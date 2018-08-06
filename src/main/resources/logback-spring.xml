@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_HOME" value="./log"/>
+
+    <!-- 跟踪日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} %-5level - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/debug.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/debug.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/error.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/error.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--应答日志 -->
+    <appender name="RESPONSE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/response.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/response.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 请求日志 -->
+    <appender name="REQUEST" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/request.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/request.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 登录日志 -->
+    <appender name="LOGGIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/loggin.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/loggin.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss.SSS} %X{userid} %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 用户日志 -->
+    <appender name="BEHAVIOR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/user.log</file>
+        <append>true</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/user.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%X{traceId}] %d{HH:mm:ss} %X{userid} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.dreawer.cloudapp.logger.Debug" additivity="false">
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.cloudapp.logger.Error" additivity="false">
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.cloudapp.logger.Loggin" additivity="false">
+        <appender-ref ref="LOGGIN"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.cloudapp.logger.Behavior" additivity="false">
+        <appender-ref ref="BEHAVIOR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.cloudapp.logger.Request" additivity="false">
+        <appender-ref ref="REQUEST"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.cloudapp.logger.Response" additivity="false">
+        <appender-ref ref="RESPONSE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.member.persistence">
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.dreawer.member.cache">
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+
+    <!-- 将配置应用到root目录下 -->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

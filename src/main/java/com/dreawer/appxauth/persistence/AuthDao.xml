@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dreawer.appxauth.domain.AuthInfo">
+
+    <!-- ================================================================================== -->
+    <!-- SQL查询																				-->
+    <!-- ================================================================================== -->
+
+    <select id="findByAppid" parameterType="String" resultMap="AuthInfoResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM
+        auth_info
+        WHERE
+        appid = #{appid}
+    </select>
+
+    <!-- ================================================================================== -->
+    <!-- SQL插入																-->
+    <!-- ================================================================================== -->
+
+    <insert id="save" parameterType="AuthInfo">
+        INSERT INTO
+        auth_info(
+        <include refid="basicFields"/>
+        )
+        VALUES (
+        #{id}
+        ,#{appid}
+        ,#{authorizationCode}
+        ,#{accessToken}
+        ,#{refreshToken}
+        ,#{expireIn}
+        ,#{appType}
+        ,#{createrId}
+        ,#{createTime}
+        ,#{updateTIme}
+        )
+    </insert>
+
+    <update id="update" parameterType="AuthInfo">
+        UPDATE
+        auth_info
+        SET
+        <if test="authorizationCode!=null">
+            auth_code = #{authorizationCode} ,
+        </if>
+        <if test="accessToken!=null">
+            acc_tkn = #{accessToken},
+        </if>
+        <if test="refreshToken!=null">
+            ref_tkn = #{refreshToken},
+        </if>
+        <if test="expireIn!=null">
+            expire_in = #{expireIn},
+        </if>
+        <if test="appType!=null">
+            app_type = #{appType},
+        </if>
+        <if test="createrId!=null">
+            crer_id =#{createrId},
+        </if>
+        <if test="createTime!=null">
+            cre_tim = #{createTime},
+        </if>
+        <if test="updateTIme!=null">
+            upd_tim = #{updateTIme}
+        </if>
+        WHERE
+        id = #{id}
+        AND appid = #{appid}
+    </update>
+    <!-- ================================================================================== -->
+    <!-- 公用SQL定义																			-->
+    <!-- ================================================================================== -->
+
+    <!-- 基本信息 -->
+    <sql id="basicFields">
+        id
+        , appid
+        , auth_code
+        , acc_tkn
+        , ref_tkn
+        , expire_in
+        , app_type
+        , crer_id
+        , cre_tim
+        , upd_tim
+    </sql>
+
+    <!-- ================================================================================== -->
+    <!-- 结果集映射																				-->
+    <!-- ================================================================================== -->
+    <resultMap id="AuthInfoResultMap" type="com.dreawer.appxauth.domain.AuthInfo">
+        <result property="id" column="id"/>
+        <result property="appid" column="appid"/>
+        <result property="authorizationCode" column="auth_code"/>
+        <result property="accessToken" column="acc_tkn"/>
+        <result property="refreshToken" column="ref_tkn"/>
+        <result property="expireIn" column="expire_in"/>
+        <result property="appType" column="app_type"/>
+        <result property="createrId" column="cre_id"/>
+        <result property="createTime" column="cre_tim"/>
+        <result property="updateTime" column="upd_tim"/>
+    </resultMap>
+
+</mapper>

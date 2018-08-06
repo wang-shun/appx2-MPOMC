@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dreawer.appxauth.domain.AppCase">
+
+    <!-- ================================================================================== -->
+    <!-- SQL查询																				-->
+    <!-- ================================================================================== -->
+
+    <select id="findAllAppCase" resultMap="AppCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_case
+        ORDER BY cre_tim ASC
+    </select>
+
+    <select id="findById" parameterType="String" resultMap="AppCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_case
+        WHERE id = #{id}
+    </select>
+
+    <select id="findMerchandiseSkuByCaseId" parameterType="String" resultType="String">
+        SELECT mdsi_sku_id
+        FROM appx_thm_mdsi
+        WHERE thm_id = #{id}
+    </select>
+
+
+    <!-- ================================================================================== -->
+    <!-- 公用SQL定义																			-->
+    <!-- ================================================================================== -->
+
+    <!-- 基本信息 -->
+    <sql id="basicFields">
+        id, title, price, subtitle, platform, bac_end, domain, spuId, def_qr, industry, intro, title_img, back_img
+        , crer_id, cre_tim, updr_id, upd_tim
+    </sql>
+
+    <!-- ================================================================================== -->
+    <!-- 结果集映射																				-->
+    <!-- ================================================================================== -->
+    <resultMap id="AppCaseResultMap" type="AppCase">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="price" column="price"/>
+        <result property="subtitle" column="subtitle"/>
+        <result property="platform" column="platform"/>
+        <result property="backend" column="bac_end"/>
+        <result property="domain" column="domain"/>
+        <result property="spuId" column="spuId"/>
+        <result property="defaultQRcode" column="def_qr"/>
+        <result property="industry" column="industry"/>
+        <result property="intro" column="intro"/>
+        <result property="titleImage" column="title_img"/>
+        <result property="backgroundImage" column="back_img"/>
+        <result property="creater.id" column="crer_id"/>
+        <result property="createTime" column="cre_tim"/>
+        <result property="updater.id" column="updr_id"/>
+        <result property="updateTime" column="upd_tim"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dreawer.appxauth.domain.UserCase">
+
+    <!-- ================================================================================== -->
+    <!-- SQL查询																				-->
+    <!-- ================================================================================== -->
+
+    <select id="findAllUserCaseByUserId" parameterType="String" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_user_case
+        WHERE user_id = #{id}
+        ORDER BY cre_tim DESC
+    </select>
+
+    <select id="findUserCaseByAppId" parameterType="String" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_user_case
+        WHERE app_id = #{appid}
+    </select>
+
+    <select id="findUserCaseById" parameterType="String" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_user_case
+        WHERE id = #{userCaseId}
+    </select>
+
+    <select id="findUserCaseByOrderId" parameterType="String" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_user_case
+        WHERE orders = #{orderId}
+    </select>
+
+    <select id="findAllUserCaseByCondition" parameterType="Map" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM appx_user_case
+        WHERE
+        1=1
+        <if test="publishStatus!=null">
+            AND
+            pub_sts=#{publishStatus}
+        </if>
+        ORDER BY
+        `cre_tim` DESC
+        LIMIT #{start},#{pageSize}
+    </select>
+
+    <select id="getCaseCount" parameterType="Map" resultType="Integer">
+        SELECT count(1)
+        FROM appx_user_case
+        WHERE 1=1
+        <if test="publishStatus!=null">
+            AND pub_sts =#{publishStatus}
+        </if>
+    </select>
+
+
+    <!-- ================================================================================== -->
+    <!-- SQL更新																			-->
+    <!-- ================================================================================== -->
+    <update id="updateUserCase" parameterType="UserCase">
+        UPDATE appx_user_case
+        SET
+        <if test="name!=null">
+            name=#{name},
+        </if>
+        <if test="logo!=null">
+            logo=#{logo},
+        </if>
+        <if test="backendUrl!=null">
+            bac_url=#{backendUrl},
+        </if>
+        <if test="previewQRcode!=null">
+            pre_qr=#{previewQRcode},
+        </if>
+        <if test="releaseQRcode!=null">
+            rel_qr=#{releaseQRcode},
+        </if>
+        <if test="themeId!=null">
+            thm_id=#{themeId},
+        </if>
+        <if test="appId!=null">
+            app_id=#{appId},
+        </if>
+        <if test="domain!=null">
+            domain=#{domain},
+        </if>
+        <if test="category!=null">
+            category=#{category},
+        </if>
+        <if test="saleMode!=null">
+            sal_mode=#{saleMode},
+        </if>
+        <if test="delegatePhone!=null">
+            dele_ph=#{delegatePhone},
+        </if>
+        <if test="publishStatus!=null">
+            pub_sts=#{publishStatus},
+        </if>
+        <if test="durationType!=null">
+            dur_type=#{durationType},
+        </if>
+        <if test="expireDate!=null">
+            exp_date=#{expireDate},
+        </if>
+        <if test="appName!=null">
+            app_nam=#{appName},
+        </if>
+        <if test="themeName!=null">
+            thm_nam=#{themeName},
+        </if>
+        <if test="clientName!=null">
+            cli_nam=#{clientName},
+        </if>
+        <if test="clientContact!=null">
+            cli_cnt=#{clientContact},
+        </if>
+        <if test="auditResult!=null">
+            aud_res=#{auditResult},
+        </if>
+        <if test="updater!=null and updater.id!=null">
+            updr_id=#{updater.id},
+        </if>
+        upd_tim=#{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- ================================================================================== -->
+    <!-- SQL添加																	-->
+    <!-- ================================================================================== -->
+    <insert id="addUserCase" parameterType="UserCase">
+        INSERT INTO appx_user_case(id,name,sal_mode,cli_nam,cli_cnt,dele_ph,app_nam,thm_nam,
+        <!-- 订单列表,用;分割 -->
+        orders,
+        bac_url,pub_sts,app_id,thm_id,exp_date,domain,dur_type,crer_id,cre_tim)
+        VALUES
+        (#{id},#{name},#{saleMode},#{clientName},#{clientContact},#{delegatePhone},#{appName},#{themeName},#{orderIds},
+
+        #{backendUrl},#{publishStatus},#{appId},#{themeId},#{expireDate},
+        #{domain},#{durationType},#{creater.id},#{createTime})
+    </insert>
+
+
+    <!-- ================================================================================== -->
+    <!-- 公用SQL定义																			-->
+    <!-- ================================================================================== -->
+
+    <select id="findAllUserCaseByUserCase" parameterType="Map" resultMap="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM
+        appx_user_case
+        <where>
+
+            <if test="userCase.name!=null">
+                AND name LIKE CONCAT('%',#{userCase.name},'%')
+            </if>
+            <if test="userCase.appName!=null">
+                AND app_nam LIKE CONCAT('%',#{userCase.appName},'%')
+            </if>
+            <if test="userCase.appId!=null">
+                AND app_id = #{userCase.appId}
+            </if>
+            <if test="userCase.themeId!=null">
+                AND thm_id = #{userCase.themeId}
+            </if>
+            <if test="startTime != null">
+                AND cre_tim &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND cre_tim &lt;= #{endTime}
+            </if>
+            <if test="userCase.publishStatus">
+                AND pub_sts =#{userCase.publishStatus}
+            </if>
+            <if test="userCase.clientName!=null">
+                AND cli_nam LIKE CONCAT('%',#{userCase.clientName},'%')
+            </if>
+            <if test="userCase.clientContact!=null">
+                AND cli_cnt = #{userCase.clientContact}
+            </if>
+            <if test="userCase.creater!=null">
+                AND crer_id = #{userCase.creater.id}
+            </if>
+        </where>
+        ORDER BY cre_tim DESC
+        LIMIT #{start}, #{maxResults}
+
+    </select>
+
+    <select id="getUserCaseByConditionCount" parameterType="Map" resultType="Integer">
+        SELECT COUNT(1)
+        FROM appx_user_case
+        <where>
+            <if test="userCase.name!=null">
+                AND name LIKE CONCAT('%',#{userCase.name},'%')
+            </if>
+            <if test="userCase.appName!=null">
+                AND app_nam LIKE CONCAT('%',#{userCase.appName},'%')
+            </if>
+            <if test="userCase.appId!=null">
+                AND app_id = #{userCase.appId}
+            </if>
+            <if test="userCase.themeId!=null">
+                AND thm_id = #{userCase.themeId}
+            </if>
+            <if test="startTime != null">
+                AND cre_tim &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND cre_tim &lt;= #{endTime}
+            </if>
+            <if test="userCase.publishStatus">
+                AND pub_sts =#{userCase.publishStatus}
+            </if>
+            <if test="userCase.clientName!=null">
+                AND cli_nam LIKE CONCAT('%',#{userCase.clientName},'%')
+            </if>
+            <if test="userCase.clientContact!=null">
+                AND cli_cnt = #{userCase.clientContact}
+            </if>
+            <if test="userCase.creater!=null">
+                AND crer_id = #{userCase.creater.id}
+            </if>
+        </where>
+    </select>
+
+    <!-- 基本信息 -->
+    <sql id="basicFields">
+        id, name, logo, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
+    </sql>
+
+    <!-- ================================================================================== -->
+    <!-- 结果集映射																				-->
+    <!-- ================================================================================== -->
+    <resultMap id="UserCaseResultMap" type="UserCase">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="logo" column="logo"/>
+        <result property="backendUrl" column="bac_url"/>
+        <result property="previewQRcode" column="pre_qr"/>
+        <result property="releaseQRcode" column="rel_qr"/>
+        <result property="themeId" column="thm_id"/>
+        <result property="appId" column="app_id"/>
+        <result property="domain" column="domain"/>
+        <result property="category" column="category"/>
+        <result property="saleMode" column="sal_mode"/>
+        <result property="delegatePhone" column="dele_ph"/>
+        <result property="publishStatus" column="pub_sts"/>
+        <result property="durationType" column="dur_type"/>
+        <result property="expireDate" column="exp_date"/>
+        <result property="appName" column="app_nam"/>
+        <result property="themeName" column="thm_nam"/>
+        <result property="orderIds" column="orders"/>
+        <result property="clientName" column="cli_nam"/>
+        <result property="clientContact" column="cli_cnt"/>
+        <result property="auditResult" column="aud_res"/>
+        <result property="creater.id" column="crer_id"/>
+        <result property="createTime" column="cre_tim"/>
+        <result property="updater.id" column="updr_id"/>
+        <result property="updateTime" column="upd_tim"/>
+    </resultMap>
+
+</mapper>
