@@ -123,7 +123,7 @@ public class AuthController extends BaseController {
 
 
             //在用户中心注册
-            String userInfo = appManager.signUp(petName, appid, mugshot);
+            String userInfo = appManager.signUp(petName, oid, mugshot);
             JSONObject info = new JSONObject(userInfo);
             logger.debug(info);
             if (!info.has("id") || !info.get("code").equals("000000")) {
