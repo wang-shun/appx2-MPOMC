@@ -127,11 +127,11 @@ public class AuthController extends BaseController {
             String userInfo = appManager.signUp(petName, oid, mugshot);
             JSONObject info = new JSONObject(userInfo);
             logger.debug(info);
-            if (!info.has("id") || !info.get("code").equals("000000")) {
+            if (!info.get("code").equals("000000")) {
                 return Error.APPSERVER;
             }
             //获取id保存为应用用户主键
-            String id = (String) info.get("id");
+            String id = (String) info.getJSONObject("data").get("id");
             application = new Application();
             application.setAppid(appid);
             application.setOpenid(openId);
