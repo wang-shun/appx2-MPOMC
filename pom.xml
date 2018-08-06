@@ -5,7 +5,7 @@
 
     <groupId>com.dreawer</groupId>
     <artifactId>mpomc</artifactId>
-    <version>0.1.7-SNAPSHOT</version>
+    <version>0.1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>mpomc</name>
@@ -161,7 +161,11 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/commons-codec-1.9.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <version>1.46</version>
+        </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
