@@ -124,8 +124,8 @@
         <if test="auditResult!=null">
             aud_res=#{auditResult},
         </if>
-        <if test="updater!=null and updater.id!=null">
-            updr_id=#{updater.id},
+        <if test="updaterId!=null">
+            updr_id=#{updaterId},
         </if>
         upd_tim=#{updateTime}
         WHERE id = #{id}
@@ -143,7 +143,7 @@
         (#{id},#{name},#{saleMode},#{clientName},#{clientContact},#{delegatePhone},#{appName},#{themeName},#{orderIds},
 
         #{backendUrl},#{publishStatus},#{appId},#{themeId},#{expireDate},
-        #{domain},#{durationType},#{creater.id},#{createTime})
+        #{domain},#{durationType},#{createrId},#{createTime})
     </insert>
 
 
@@ -186,7 +186,7 @@
                 AND cli_cnt = #{userCase.clientContact}
             </if>
             <if test="userCase.creater!=null">
-                AND crer_id = #{userCase.creater.id}
+                AND crer_id = #{userCase.createrId}
             </if>
         </where>
         ORDER BY cre_tim DESC
@@ -226,7 +226,7 @@
                 AND cli_cnt = #{userCase.clientContact}
             </if>
             <if test="userCase.creater!=null">
-                AND crer_id = #{userCase.creater.id}
+                AND crer_id = #{userCase.createrId}
             </if>
         </where>
     </select>
@@ -261,9 +261,9 @@
         <result property="clientName" column="cli_nam"/>
         <result property="clientContact" column="cli_cnt"/>
         <result property="auditResult" column="aud_res"/>
-        <result property="creater.id" column="crer_id"/>
+        <result property="createrId" column="crer_id"/>
         <result property="createTime" column="cre_tim"/>
-        <result property="updater.id" column="updr_id"/>
+        <result property="updaterId" column="updr_id"/>
         <result property="updateTime" column="upd_tim"/>
     </resultMap>
 
