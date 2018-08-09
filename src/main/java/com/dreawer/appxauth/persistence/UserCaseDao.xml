@@ -185,7 +185,7 @@
             <if test="userCase.clientContact!=null">
                 AND cli_cnt = #{userCase.clientContact}
             </if>
-            <if test="userCase.creater!=null">
+            <if test="userCase.createrId!=null">
                 AND crer_id = #{userCase.createrId}
             </if>
         </where>
@@ -225,7 +225,7 @@
             <if test="userCase.clientContact!=null">
                 AND cli_cnt = #{userCase.clientContact}
             </if>
-            <if test="userCase.creater!=null">
+            <if test="userCase.createrId!=null">
                 AND crer_id = #{userCase.createrId}
             </if>
         </where>
