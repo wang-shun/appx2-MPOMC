@@ -26,7 +26,7 @@ public class Swagger2 {
                 .apiInfo(apiInfo())
                 .select()
                 //为当前包路径
-                .apis(RequestHandlerSelectors.basePackage("com.dreawer.*.*"))
+                .apis(RequestHandlerSelectors.basePackage("com.dreawer.*.*.*"))
                 .paths(PathSelectors.any())
                 .build();
     }
