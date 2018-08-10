@@ -1,10 +1,12 @@
 package com.dreawer.appxauth.controller;
 
 import com.dreawer.appxauth.domain.AppCase;
+import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.appxauth.form.CaseQueryForm;
 import com.dreawer.appxauth.form.CreateUserCaseForm;
+import com.dreawer.appxauth.form.UserCaseCountForm;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.QueryType;
 import com.dreawer.appxauth.lang.SaleMode;
@@ -296,5 +298,36 @@ public class CaseController extends BaseController {
     }
 
 
+    /**
+     * 分页查询客户解决方案数量
+     *
+     * @param form
+     * @param result
+     * @return 返回结果
+     */
+    @ApiOperation(value = "分页查询解决方案列表")
+    @RequestMapping(value = COUNT_BY_ID, method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseCode queryByUserId(@RequestBody @Valid UserCaseCountForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
+        }
+        try {
+            List<String> userIds = form.getUserIds();
+            Calendar calendar = Calendar.getInstance();
+            //获取10天后后的时间
+            calendar.add(Calendar.DATE, 10);
+            //获取20天后后的时间
+            Timestamp redAlert = new Timestamp(calendar.getTimeInMillis());
+            calendar.add(Calendar.DATE, 10);
+            Timestamp yellowAlert = new Timestamp(calendar.getTimeInMillis());
+            List<CaseCountForm> list = userCaseService.getUserCaseByIdCount(userIds, yellowAlert, redAlert);
+            return Success.SUCCESS(list);
+        } catch (Exception e) {
+            logger.error(e);
+            // 返回失败标志及信息
+            return Error.APPSERVER;
+        }
+    }
 }
 

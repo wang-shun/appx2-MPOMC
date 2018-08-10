@@ -94,6 +94,14 @@ public final class ControllerConstants {
      * 请求 "查询"
      */
     public static final String REQ_QUERY = "/query";
+
+
+    /**
+     * 请求 "根据用户ID查询"
+     */
+    public static final String COUNT_BY_ID = "/countById";
+
+
     /**
      * 请求 "通过ID查询"
      */

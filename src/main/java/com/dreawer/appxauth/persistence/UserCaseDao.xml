@@ -231,6 +231,21 @@
         </where>
     </select>
 
+    <!-- 查询每个用户的解决方案数量和是否存在黄色到期预警和红色预警的到期小程序 -->
+    <select id="getUserCaseByIdCount" parameterType="Map" resultMap="CountByUserIdResultMap">
+        SELECT COUNT(1) AS cont , appx.crer_id AS crer_id, EXISTS(SELECT id FROM appx_user_case where
+        appx.exp_date &lt; #{yellowAlert}) AS yellow,EXISTS(SELECT id FROM appx_user_case where
+        appx.exp_date &lt; #{redAlert}) AS red
+        FROM
+        ( SELECT * FROM appx_user_case
+        WHERE crer_id in
+        <foreach collection="userIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ) as appx
+        group by (crer_id)
+    </select>
+
     <!-- 基本信息 -->
     <sql id="basicFields">
         id, name, logo, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
@@ -265,6 +280,13 @@
         <result property="createTime" column="cre_tim"/>
         <result property="updaterId" column="updr_id"/>
         <result property="updateTime" column="upd_tim"/>
+    </resultMap>
+
+    <resultMap id="CountByUserIdResultMap" type="com.dreawer.appxauth.domain.CaseCountForm">
+        <result property="userId" column="crer_id"/>
+        <result property="count" column="cont"/>
+        <result property="yellow" column="yellow"/>
+        <result property="red" column="red"/>
     </resultMap>
 
 </mapper>

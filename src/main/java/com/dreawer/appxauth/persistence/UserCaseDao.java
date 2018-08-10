@@ -1,8 +1,10 @@
 package com.dreawer.appxauth.persistence;
 
 import com.dreawer.appxauth.domain.UserCase;
+import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.persistence.mybatis.MyBatisBaseDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -20,6 +22,7 @@ import java.util.Map;
 
 @Repository
 public class UserCaseDao extends MyBatisBaseDao<UserCase> {
+
 
     /**
      * 通过用户id查询所有账户下小程序
@@ -144,5 +147,19 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
         param.put("startTime", startTime);
         param.put("endTime", endTime);
         return count("getUserCaseByConditionCount", param);
+    }
+
+    /**
+     * 通过用户ID列表查看解决方案数量
+     *
+     * @param userIds
+     */
+    public List<CaseCountForm> getUserCaseByIdCount(List<String> userIds, Timestamp yellowAlert, Timestamp redAlert) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userIds", userIds);
+        param.put("yellowAlert", yellowAlert);
+        param.put("redAlert", redAlert);
+        //return selectList("getUserCaseByConditionCount", param);
+        return this.getSqlSession().selectList("getUserCaseByIdCount", param);
     }
 }

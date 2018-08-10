@@ -1,5 +1,6 @@
 package com.dreawer.appxauth.service;
 
+import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.persistence.UserCaseDao;
@@ -7,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -142,5 +144,12 @@ public class UserCaseService {
         return userCaseDao.getUserCaseByConditionCount(userCase, contact, startTime, endTime);
     }
 
-
+    /**
+     * 通过用户ID列表查看解决方案数量
+     *
+     * @param userIds
+     */
+    public List<CaseCountForm> getUserCaseByIdCount(List<String> userIds, Timestamp yellowAlert, Timestamp redAlert) {
+        return userCaseDao.getUserCaseByIdCount(userIds, yellowAlert, redAlert);
+    }
 }

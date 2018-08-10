@@ -101,7 +101,7 @@ public class GeneralConditionHandler {
             result = (ResponseCode) pjp.proceed();
 
         } catch (Throwable e) {
-            logger.error("error on", e);
+            logger.info("error on", e);
             if (e instanceof WxAppException) {
                 result = Error.EXT_REQUEST(((WxAppException) e).getErrMsg());
             } else if (e instanceof Exception) {
