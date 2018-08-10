@@ -15,6 +15,7 @@ import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.ResponseCodeRepository;
 import com.dreawer.responsecode.rcdt.Success;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -183,12 +184,13 @@ public class CaseController extends BaseController {
     }
 
     /**
-     * 分页查询行业方案列表
+     * 分页查询解决方案列表
      *
      * @param form
      * @param result
      * @return 返回结果
      */
+    @ApiOperation(value = "分页查询解决方案列表")
     @RequestMapping(value = REQ_QUERY, method = RequestMethod.POST)
     public @ResponseBody
     ResponseCode query(@RequestBody @Valid CaseQueryForm form, BindingResult result) {
