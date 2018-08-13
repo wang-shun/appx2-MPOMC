@@ -246,7 +246,7 @@
         group by (crer_id)
     </select>
 
-    <select id="findAllByExpireTime" parameterType="Map" resultType="UserCaseResultMap">
+    <select id="findAllByExpireTime" parameterType="Map" resultMap="UserCaseResultMap">
         SELECT
         <include refid="basicFields"/>
         FROM
