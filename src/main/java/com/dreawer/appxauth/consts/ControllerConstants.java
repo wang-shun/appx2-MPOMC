@@ -101,6 +101,11 @@ public final class ControllerConstants {
      */
     public static final String COUNT_BY_ID = "/countById";
 
+    /**
+     * 请求 "查询到期"
+     */
+    public static final String QUERY_EXPIRE = "/queryExpire";
+
 
     /**
      * 请求 "通过ID查询"

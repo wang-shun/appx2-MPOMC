@@ -246,6 +246,15 @@
         group by (crer_id)
     </select>
 
+    <select id="findAllByExpireTime" parameterType="Map" resultType="UserCaseResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM
+        appx_user_case
+        WHERE exp_date between #{startTime} and #{endTime}
+        AND pub_sts = 'PUBLISHED'
+    </select>
+
     <!-- 基本信息 -->
     <sql id="basicFields">
         id, name, logo, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim

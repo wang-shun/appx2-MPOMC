@@ -162,4 +162,18 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
         //return selectList("getUserCaseByConditionCount", param);
         return this.getSqlSession().selectList("getUserCaseByIdCount", param);
     }
+
+    /**
+     * 查询指定期限内到期的解决方案列表
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public List<UserCase> findAllByExpireTime(Timestamp startTime, Timestamp endTime) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("startTime", startTime);
+        param.put("endTime", endTime);
+        return selectList("findAllByExpireTime", param);
+    }
 }

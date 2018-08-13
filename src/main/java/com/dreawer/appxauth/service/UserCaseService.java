@@ -152,4 +152,15 @@ public class UserCaseService {
     public List<CaseCountForm> getUserCaseByIdCount(List<String> userIds, Timestamp yellowAlert, Timestamp redAlert) {
         return userCaseDao.getUserCaseByIdCount(userIds, yellowAlert, redAlert);
     }
+
+    /**
+     * 查询指定期限内到期的解决方案列表
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public List<UserCase> findAllByExpireTime(Timestamp startTime, Timestamp endTime) {
+        return userCaseDao.findAllByExpireTime(startTime, endTime);
+    }
 }

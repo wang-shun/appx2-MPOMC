@@ -329,5 +329,32 @@ public class CaseController extends BaseController {
             return Error.APPSERVER;
         }
     }
+
+
+    /**
+     * 查询指定时间内到期的解决方案
+     *
+     * @param form
+     * @param result
+     * @return 返回结果
+     */
+    @ApiOperation(value = "查询指定时间内到期的解决方案")
+    @RequestMapping(value = QUERY_EXPIRE, method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseCode queryExpire(@RequestBody @Valid CaseQueryForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
+        }
+        try {
+            Timestamp startTime = new Timestamp(form.getStartTime());
+            Timestamp endTime = new Timestamp(form.getEndTime());
+            List<UserCase> list = userCaseService.findAllByExpireTime(startTime, endTime);
+            return Success.SUCCESS(list);
+        } catch (Exception e) {
+            logger.error(e);
+            // 返回失败标志及信息
+            return Error.APPSERVER;
+        }
+    }
 }
 
