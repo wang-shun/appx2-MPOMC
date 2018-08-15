@@ -11,17 +11,12 @@ import java.util.Map;
  * <CODE>AppDao</CODE>
  *
  * @author fenrir
- * @Date 18-7-13
+ * @Date 18-8-14
  */
 
 @Repository
 public class AppDao extends MyBatisBaseDao<Application> {
-    public Application findByAppidAndOrganizationId(String appid, String organizationId) {
-        Map<String, String> param = new HashMap<>();
-        param.put("appid", appid);
-        param.put("organizationId", organizationId);
-        return selectOne("findByAppidAndOrganizationId", param);
-    }
+
 
     public void save(Application application) {
         insert("save", application);
@@ -29,5 +24,11 @@ public class AppDao extends MyBatisBaseDao<Application> {
 
     public void update(Application application) {
         update("update", application);
+    }
+
+    public Application findById(String id) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        return selectOne("findById", param);
     }
 }

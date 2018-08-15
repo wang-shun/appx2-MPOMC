@@ -20,7 +20,10 @@ public class CreateUserCaseForm {
     private String orderId = null; //订单ID
 
     @NotEmpty(message = "EntryError.EMPTY")
-    private String skuId = null; //商品ID
+    private String skuId = null; //商品SkuID
+
+    @NotEmpty(message = "EntryError.EMPTY")
+    private String spuId = null; //商品ID
 
     @NotEmpty(message = "EntryError.EMPTY")
     private String number = null; //数量

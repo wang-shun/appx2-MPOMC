@@ -108,7 +108,13 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
      * @param start
      * @param pageSize  @return
      */
-    public List<UserCase> findAllUserCaseByCondition(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime, int start, int pageSize) {
+    public List<UserCase> findAllUserCaseByCondition(UserCase userCase,
+                                                     String contact,
+                                                     Timestamp startTime,
+                                                     Timestamp endTime,
+                                                     int start,
+                                                     int pageSize,
+                                                     String status) {
         Map<String, Object> param = new HashMap<>();
         param.put("userCase", userCase);
         param.put("contact", contact);
@@ -116,6 +122,7 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
         param.put("endTime", endTime);
         param.put("start", start);
         param.put("maxResults", pageSize);
+        param.put("status", status);
         return selectList("findAllUserCaseByUserCase", param);
     }
 
@@ -140,12 +147,13 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
      * @param endTime
      * @return
      */
-    public int getUserCaseByConditionCount(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime) {
+    public int getUserCaseByConditionCount(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime, String status) {
         Map<String, Object> param = new HashMap<>();
         param.put("userCase", userCase);
         param.put("contact", contact);
         param.put("startTime", startTime);
         param.put("endTime", endTime);
+        param.put("status", status);
         return count("getUserCaseByConditionCount", param);
     }
 

@@ -76,6 +76,9 @@
         <if test="backendUrl!=null">
             bac_url=#{backendUrl},
         </if>
+        <if test="storeId!=null">
+            sto_id=#{storeId},
+        </if>
         <if test="previewQRcode!=null">
             pre_qr=#{previewQRcode},
         </if>
@@ -176,9 +179,7 @@
             <if test="endTime != null">
                 AND cre_tim &lt;= #{endTime}
             </if>
-            <if test="userCase.publishStatus">
-                AND pub_sts =#{userCase.publishStatus}
-            </if>
+
             <if test="userCase.clientName!=null">
                 AND cli_nam LIKE CONCAT('%',#{userCase.clientName},'%')
             </if>
@@ -187,6 +188,22 @@
             </if>
             <if test="userCase.createrId!=null">
                 AND crer_id = #{userCase.createrId}
+            </if>
+            <if test="status!=null">
+                <choose>
+                    <when test="status == 'ONGOING'">
+                        AND pub_sts != 'EXPIRED'
+                        <if test="userCase.publishStatus!=null">
+                            AND pub_sts =#{userCase.publishStatus}
+                        </if>
+                    </when>
+                    <when test="status == 'EXPIRED'">
+                        AND pub_sts = 'EXPIRED'
+                    </when>
+                    <when test="status == 'ALL'">
+                        AND pub_sts =#{userCase.publishStatus}
+                    </when>
+                </choose>
             </if>
         </where>
         ORDER BY cre_tim DESC
@@ -216,9 +233,6 @@
             <if test="endTime != null">
                 AND cre_tim &lt;= #{endTime}
             </if>
-            <if test="userCase.publishStatus">
-                AND pub_sts =#{userCase.publishStatus}
-            </if>
             <if test="userCase.clientName!=null">
                 AND cli_nam LIKE CONCAT('%',#{userCase.clientName},'%')
             </if>
@@ -227,6 +241,22 @@
             </if>
             <if test="userCase.createrId!=null">
                 AND crer_id = #{userCase.createrId}
+            </if>
+            <if test="status!=null">
+                <choose>
+                    <when test="status == 'ONGOING'">
+                        AND pub_sts != 'EXPIRED'
+                        <if test="userCase.publishStatus!=null">
+                            AND pub_sts =#{userCase.publishStatus}
+                        </if>
+                    </when>
+                    <when test="status == 'EXPIRED'">
+                        AND pub_sts = 'EXPIRED'
+                    </when>
+                    <when test="status == 'ALL'">
+                        AND pub_sts =#{userCase.publishStatus}
+                    </when>
+                </choose>
             </if>
         </where>
     </select>
@@ -257,7 +287,7 @@
 
     <!-- 基本信息 -->
     <sql id="basicFields">
-        id, name, logo, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
+        id, name, logo, sto_id, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
     </sql>
 
     <!-- ================================================================================== -->
@@ -267,6 +297,7 @@
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="logo" column="logo"/>
+        <result property="storeId" column="sto_id"/>
         <result property="backendUrl" column="bac_url"/>
         <result property="previewQRcode" column="pre_qr"/>
         <result property="releaseQRcode" column="rel_qr"/>

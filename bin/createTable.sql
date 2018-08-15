@@ -18,7 +18,19 @@ CREATE TABLE auth_info
   upd_tim   timestamp DEFAULT current_timestamp
   COMMENT '更新时间'
 );
+
+DROP TABLE IF EXISTS `application`;
 CREATE TABLE application
+(
+  id    varchar(32) PRIMARY KEY
+  COMMENT '主键',
+  appid char(32) NOT NULL
+  COMMENT '小程序id',
+  oid   char(32) NOT NULL
+  COMMENT '小程序应用id'
+);
+DROP TABLE IF EXISTS `app_user`;
+CREATE TABLE app_user
 (
   id          varchar(32) PRIMARY KEY
   COMMENT '主键',
@@ -42,6 +54,8 @@ CREATE TABLE `appx_user_case` (
   COMMENT '方案名称',
   `logo`     varchar(255)           DEFAULT NULL
   COMMENT '商标',
+  `sto_id`   char(32)
+  COMMENT '店铺Id',
   `bac_url`  char(128)              DEFAULT NULL,
   `pre_qr`   varchar(128)           DEFAULT NULL
   COMMENT '预览图url',

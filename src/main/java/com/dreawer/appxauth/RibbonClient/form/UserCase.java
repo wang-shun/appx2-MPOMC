@@ -1,7 +1,5 @@
-package com.dreawer.appxauth.domain;
+package com.dreawer.appxauth.RibbonClient.form;
 
-import com.dreawer.appxauth.lang.PublishStatus;
-import com.dreawer.appxauth.lang.SaleMode;
 import com.dreawer.domain.BaseDomain;
 import lombok.Data;
 
@@ -21,8 +19,6 @@ public class UserCase extends BaseDomain {
     private static final long serialVersionUID = 987547913809928583L;
 
     private String name = null; //方案名称
-
-    private String storeId = null; //店铺Id
 
     private String logo = null; //logo
 
@@ -46,7 +42,7 @@ public class UserCase extends BaseDomain {
 
     private String category = null; //业务别名
 
-    private SaleMode saleMode = null; //销售状态 ADVANCE-预售,DEFALUT 默认
+    private String saleMode = null; //销售状态 ADVANCE-预售,DEFALUT 默认
 
     private String clientName = null; //客户名称
 
@@ -54,7 +50,7 @@ public class UserCase extends BaseDomain {
 
     private String delegatePhone = null; //委托发布手机号
 
-    private PublishStatus publishStatus = null; //发布状态
+    private String publishStatus = null; //发布状态
 
     private String durationType = null; //付费周期
 

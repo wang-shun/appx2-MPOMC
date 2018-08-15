@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -31,9 +30,6 @@ public class UserCaseService {
 
     @Autowired
     private CaseService caseService;
-
-    @Autowired
-    private CaseThemeService caseThemeService;
 
 
     /**
@@ -116,8 +112,14 @@ public class UserCaseService {
      * @param start
      * @param pageSize  @return
      */
-    public List<UserCase> findAllUserCaseByCondition(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime, int start, int pageSize) {
-        return userCaseDao.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize);
+    public List<UserCase> findAllUserCaseByCondition(UserCase userCase,
+                                                     String contact,
+                                                     Timestamp startTime,
+                                                     Timestamp endTime,
+                                                     int start,
+                                                     int pageSize,
+                                                     String status) {
+        return userCaseDao.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize, status);
     }
 
     /**
@@ -140,8 +142,8 @@ public class UserCaseService {
      * @param endTime
      * @return
      */
-    public int getUserCaseByConditionCount(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime) {
-        return userCaseDao.getUserCaseByConditionCount(userCase, contact, startTime, endTime);
+    public int getUserCaseByConditionCount(UserCase userCase, String contact, Timestamp startTime, Timestamp endTime, String status) {
+        return userCaseDao.getUserCaseByConditionCount(userCase, contact, startTime, endTime, status);
     }
 
     /**

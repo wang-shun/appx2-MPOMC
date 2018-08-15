@@ -6,22 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * <CODE>ApplicationService</CODE>
+ * <CODE>AppService</CODE>
  *
  * @author fenrir
- * @Date 18-7-13
+ * @Date 18-8-14
  */
 
 @Service
-public class ApplicationService {
+public class AppService {
 
     @Autowired
     private AppDao appDao;
 
-
-    public Application findByAppidAndOrganizationId(String appid, String organzationId) {
-        return appDao.findByAppidAndOrganizationId(appid, organzationId);
-    }
 
     public void save(Application application) {
         appDao.save(application);
@@ -31,4 +27,7 @@ public class ApplicationService {
         appDao.update(application);
     }
 
+    public Application findById(String id) {
+        return appDao.findById(id);
+    }
 }

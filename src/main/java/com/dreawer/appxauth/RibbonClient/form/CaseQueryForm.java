@@ -1,8 +1,6 @@
-package com.dreawer.appxauth.form;
+package com.dreawer.appxauth.RibbonClient.form;
 
 
-import com.dreawer.appxauth.lang.PublishStatus;
-import com.dreawer.appxauth.lang.QueryType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,6 +10,7 @@ import javax.validation.constraints.NotNull;
 /**
  * <CODE>CaseQueryForm</CODE>
  * 请求方案查询表单
+ *
  * @author fenrir
  * @Date 18-3-1
  */
@@ -48,7 +47,7 @@ public class CaseQueryForm {
 
     @ApiModelProperty(value = "查询类型 CUSTOMER客户查询,BACKEND管理后台")
     @NotNull(message = "查询类型不能为空")
-    private QueryType type = null; //查询类型 CUSTOMER客户查询,BACKEND管理后台
+    private String type = null; //查询类型 CUSTOMER客户查询,BACKEND管理后台
 
     @ApiModelProperty(value = "页码")
     private Integer pageNo = null;
@@ -57,15 +56,10 @@ public class CaseQueryForm {
     private Integer pageSize = null;
 
     @ApiModelProperty(value = "发布状态")
-    private PublishStatus publishStatus = null; //发布状态
+    private String publishStatus = null; //发布状态
 
     @ApiModelProperty(value = "userId")
     private String userId = null;
-
-
-    public void setType(QueryType type) {
-        this.type = type;
-    }
 
     public String getUserId() {
         return userId;
@@ -131,20 +125,20 @@ public class CaseQueryForm {
         this.themeId = themeId;
     }
 
-    public QueryType getType() {
+    public String getType() {
         return type;
     }
 
     public void setType(String type) {
-        this.type = QueryType.get(type);
+        this.type = type;
     }
 
-    public PublishStatus getPublishStatus() {
+    public String getPublishStatus() {
         return publishStatus;
     }
 
     public void setPublishStatus(String publishStatus) {
-        this.publishStatus = PublishStatus.get(publishStatus);
+        this.publishStatus = publishStatus;
     }
 
     public Integer getPageNo() {

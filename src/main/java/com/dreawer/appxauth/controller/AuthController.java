@@ -1,9 +1,12 @@
 package com.dreawer.appxauth.controller;
 
+import com.dreawer.appxauth.RibbonClient.CallRequest;
 import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.Application;
+import com.dreawer.appxauth.domain.ApplicationUser;
 import com.dreawer.appxauth.domain.AuthInfo;
 import com.dreawer.appxauth.domain.UserCase;
+import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.form.WxLoginForm;
 import com.dreawer.appxauth.lang.AppType;
 import com.dreawer.appxauth.lang.PublishStatus;
@@ -12,12 +15,14 @@ import com.dreawer.appxauth.manager.AppManager;
 import com.dreawer.appxauth.manager.ServiceManager;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
-import com.dreawer.appxauth.service.ApplicationService;
+import com.dreawer.appxauth.service.AppService;
+import com.dreawer.appxauth.service.AppUserService;
 import com.dreawer.appxauth.service.AuthService;
 import com.dreawer.appxauth.service.UserCaseService;
 import com.dreawer.appxauth.utils.Okhttp;
-import com.dreawer.responsecode.rcdt.*;
 import com.dreawer.responsecode.rcdt.Error;
+import com.dreawer.responsecode.rcdt.*;
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +62,15 @@ public class AuthController extends BaseController {
     ServiceManager serviceManager;
 
     @Autowired
-    private UserCaseService userCaseService;
+    CallRequest callRequest;
+
     @Autowired
-    private ApplicationService applicationService;
+    UserCaseService userCaseService;
+    @Autowired
+    AppUserService appUserService;
+
+    @Autowired
+    AppService appService;
 
     /**
      * 跳转小程序授权页面
@@ -107,9 +118,9 @@ public class AuthController extends BaseController {
         String iv = form.getIv();
         String oid = form.getOid();
 
-        Application application = applicationService.findByAppidAndOrganizationId(appid, oid);
+        ApplicationUser applicationUser = appUserService.findByAppidAndOrganizationId(appid, oid);
         //如果该小程序用户在该企业未注册
-        if (application == null) {
+        if (applicationUser == null) {
             String response = appManager.wxLogin(appid, code);
             logger.info("=======================" + response);
             JSONObject jsonObject = new JSONObject(response);
@@ -119,7 +130,7 @@ public class AuthController extends BaseController {
             //获取用户昵称和头像
             String data = decrypt(encryptedData, sessionKey, iv);
             JSONObject userObject = new JSONObject(data);
-            if (userObject == null || !userObject.has("nickName")) {
+            if (!userObject.has("nickName")) {
                 return MessageError.UNPACK;
             }
 
@@ -136,18 +147,18 @@ public class AuthController extends BaseController {
             }
             //获取id保存为应用用户主键
             String id = (String) info.getJSONObject("data").get("id");
-            application = new Application();
-            application.setAppid(appid);
-            application.setOpenid(openId);
-            application.setOrganizationId(oid);
-            application.setSessionKey(sessionKey);
-            application.setCreateTime(getNow());
-            application.setId(id);
-            applicationService.save(application);
+            applicationUser = new ApplicationUser();
+            applicationUser.setAppid(appid);
+            applicationUser.setOpenid(openId);
+            applicationUser.setApplicationId(oid);
+            applicationUser.setSessionKey(sessionKey);
+            applicationUser.setCreateTime(getNow());
+            applicationUser.setId(id);
+            appUserService.save(applicationUser);
             return Success.SUCCESS(info);
         } else {
             //调用用户中心获得令牌
-            String id = application.getId();
+            String id = applicationUser.getId();
             Map<String, Object> param = new HashMap<>();
             param.put("userId", id);
             String response = serviceManager.getAuthorization(param);
@@ -172,10 +183,11 @@ public class AuthController extends BaseController {
     @GetMapping("/wxApp")
     @ResponseBody
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
-                                  @RequestParam("expires_in") String expiresIn) throws IOException {
+                                  @RequestParam("expires_in") String expiresIn) throws IOException, ResponseCodeException {
 
         AuthorizeInfo authorizeInfo = TokenManager.getAuthorizeInfo(authorizationCode);
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
+
         AuthInfo authInfo = authService.findByAppid(appid);
         if (authInfo == null) {
             authInfo = new AuthInfo();
@@ -210,14 +222,22 @@ public class AuthController extends BaseController {
             authService.update(authInfo);
         }
 
+
         //创建应用组织
         Map<String, Object> param = new HashMap<>();
         param.put("appId", appid);
         if (authorizeInfo.getAuthorizer_info().getNick_name().length() > 2) {
             param.put("name", authorizeInfo.getAuthorizer_info().getNick_name());
         }
-        String response = Okhttp.postSyncJson("/organization/add", param);
-        logger.debug("创建组织结果" + response);
+        //获取组织ID
+
+        String organizationId = callRequest.addOrganzation(param);
+
+        //创建应用
+        Application application = new Application();
+        application.setOrganizationId(organizationId);
+        application.setAppId(appid);
+        appService.save(application);
 
         //更新解决方案
         List<ResultType> list = appManager.checkAuthorCondition(appid);
@@ -272,6 +292,25 @@ public class AuthController extends BaseController {
 
     }
 
+    /**
+     * 获取微信头像昵称
+     *
+     * @param storeId
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/appInfo")
+    @ResponseBody
+    public ResponseCode getAppInfo(@RequestParam("storeId") String storeId) throws IOException {
+        Application application = appService.findById(storeId);
+        if (application == null) {
+            return Error.DB("未找到该应用");
+        }
+        String appId = application.getAppId();
+        String authorizerInfo = appManager.getAuthorizerInfo(appId);
+        AuthorizeInfo authorizeInfo = new Gson().fromJson(authorizerInfo, AuthorizeInfo.class);
+        return Success.SUCCESS(authorizeInfo.getAuthorizer_info());
+    }
 
 
 }

@@ -1,8 +1,12 @@
 package com.dreawer.appxauth.controller;
 
+import com.dreawer.appxauth.RibbonClient.CallRequest;
+import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
+import com.dreawer.appxauth.RibbonClient.form.ViewSku;
 import com.dreawer.appxauth.domain.AppCase;
 import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.domain.UserCase;
+import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.appxauth.form.CaseQueryForm;
 import com.dreawer.appxauth.form.CreateUserCaseForm;
@@ -17,6 +21,11 @@ import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.ResponseCodeRepository;
 import com.dreawer.responsecode.rcdt.Success;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,6 +35,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.*;
@@ -52,6 +62,9 @@ public class CaseController extends BaseController {
 
     @Autowired
     private AppManager appManager;
+
+    @Autowired
+    private CallRequest callRequest;
 
     @Autowired
     private UserCaseService userCaseService;
@@ -90,8 +103,8 @@ public class CaseController extends BaseController {
      */
     @PostMapping(CREATE)
     public @ResponseBody
-    ResponseCode createUserCase(@Valid CreateUserCaseForm form, BindingResult result) throws WxAppException {
-
+    ResponseCode createUserCase(HttpServletRequest req, @Valid CreateUserCaseForm form, BindingResult result) throws WxAppException, ResponseCodeException {
+        String userid = req.getHeader("userid");
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
@@ -99,63 +112,41 @@ public class CaseController extends BaseController {
         String orderId = form.getOrderId();
         String skuId = form.getSkuId();
         String userId = form.getUserId();
+        String spuId = form.getSpuId();
 
+        String remark = null;
+        //调用商品服务查询商品信息
+        ViewSku sku = null;
+        ViewGoods viewGoods = callRequest.goodDetail(spuId, userId);
+        List<ViewSku> skus = viewGoods.getSkus();
+        for (ViewSku viewSku : skus) {
+            String id = viewSku.getId();
+            if (id.equals(skuId)) {
+                sku = viewSku;
+                remark = viewSku.getRemark();
+                break;
+            }
+        }
 
-        //获得商品Id
-        //String merchandiseId = Okhttp.getSync(skuId);
-//         AppCaseTheme theme = caseThemeService.findThemeBySpuId(merchandiseId);
-//        if (theme==null){
-//            throw new WxAppException(MSG_THEME_NOTFOUND);
-//        }
-//        AppCase appCase = caseService.findById(theme.getCaseId());
-//        if (appCase==null) {
-//            throw new WxAppException(MSG_CASE_NOTFOUND);
-//        }
+        if (sku == null) {
+            return Error.EXT_RESPONSE("未查询到该商品对应sku");
+        }
+        if (remark == null) {
+            return Error.EXT_RESPONSE("未查询到该商品有效期");
+        }
 
-
-        //获得商品属性
-
-//        JSONResponse merchandiseDetail = merchandiseController.getMerchandiseDetail(null, null, skuId);
-//        if (!merchandiseDetail.isStatus()){
-//            logger.error(merchandiseDetail.getErrors().get(0).getMessage());
-//            throw new WxAppException(merchandiseDetail.getErrors().get(0).getMessage());
-//        }
-//        ViewMerchandiseDetail detail = (ViewMerchandiseDetail) merchandiseDetail.getData();
-//        List<MerchandiseSku> skus = detail.getSkus();
-//        MerchandiseSku sku = null;
-//        //主题描述
-//        String themeDesc = null;
-//        //查询商品信息获得商品使用期限
-//        String duration = null;
-//        for (MerchandiseSku node : skus) {
-//            if (node.getId().equals(skuId)){
-//                sku = node;
-//                List<ViewProperty> properties = sku.getProperties();
-//                for (ViewProperty property : properties) {
-//                    if (property.getName().equals("使用期限")){
-//                        List<ViewPropertyValue> values = property.getPropertyValues();
-//                        duration = values.get(0).getName();
-//                    }
-//                    if (property.getName().equals("主题色")){
-//                        List<ViewPropertyValue> values = property.getPropertyValues();
-//                        themeDesc = values.get(0).getName();
-//                        String[] split = themeDesc.split(";");
-//                        themeDesc = split[0];
-//                    }
-//                }
-//            }
-//        }
-//        if (duration==null){
-//            logger.error("未查询到有效期限信息");
-//            throw new WxAppException("未查询到有效期限信息");
-//        }
-        //Date createDate = order.getCreateTime();
+        String period = "0";
+        JsonObject returnData = new JsonParser().parse(remark).getAsJsonObject();
+        if (returnData.has("period")) {
+            JsonElement jsonElement = returnData.get("period");
+            period = jsonElement.getAsString();
+        }
         Date createDate = getNow();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
         //增加使用期限
         //calendar.add(Calendar.MONTH,Integer.parseInt(duration));
-        calendar.add(Calendar.MONTH, Integer.parseInt("15"));
+        calendar.add(Calendar.MONTH, Integer.parseInt(period));
         //增加15天
         calendar.add(Calendar.DATE, 15);
         Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
@@ -165,10 +156,10 @@ public class CaseController extends BaseController {
         userCase.setSaleMode(SaleMode.DEFAULT);
         //获取后台url
         userCase.setBackendUrl("1111");
-        userCase.setName("测试用户" + Math.random() * 10);
+        userCase.setName(viewGoods.getName());
         userCase.setAppName(null);
-        userCase.setThemeName("测试主题" + Math.random() * 10);
-        userCase.setDurationType("1" + "个月");
+        userCase.setThemeName(viewGoods.getName());
+        userCase.setDurationType(period + "月");
         userCase.setThemeId(UUID.randomUUID().toString().replace("-", ""));
         userCase.setClientName("测试用户" + Math.random() * 10);
         userCase.setClientContact("测试地址");
@@ -193,9 +184,10 @@ public class CaseController extends BaseController {
      * @return 返回结果
      */
     @ApiOperation(value = "分页查询解决方案列表")
-    @RequestMapping(value = REQ_QUERY, method = RequestMethod.POST)
+    @ApiImplicitParam(name = "status", value = "ONGING进行中,EXPIRED已失效,ALL全部")
+    @RequestMapping(value = "/query/{status}", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseCode query(@RequestBody @Valid CaseQueryForm form, BindingResult result) {
+    ResponseCode query(@PathVariable("status") String status, @RequestBody @Valid CaseQueryForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
@@ -246,7 +238,7 @@ public class CaseController extends BaseController {
             userCase.setName(form.getName());
             userCase.setAppName(form.getAppName());
 
-            List<UserCase> list = userCaseService.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize);
+            List<UserCase> list = userCaseService.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize, status);
 
             for (UserCase node : list) {
                 if (node.getPublishStatus().equals(PublishStatus.PENDING)) {
@@ -280,7 +272,7 @@ public class CaseController extends BaseController {
             }
 
             Map<String, Object> pageParam = new HashMap<>();
-            int totalSize = userCaseService.getUserCaseByConditionCount(userCase, contact, startTime, endTime);
+            int totalSize = userCaseService.getUserCaseByConditionCount(userCase, contact, startTime, endTime, status);
             int totalPage = totalSize % pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize + 1);
             pageParam.put("totalSize", totalSize);
             pageParam.put("totalPage", totalPage);
