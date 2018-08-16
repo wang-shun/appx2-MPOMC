@@ -15,11 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,8 +39,6 @@ public class AppManager {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * 获取用户小程序authorizerAccessToken
@@ -247,8 +241,6 @@ public class AppManager {
         result.put("item_list", array);
         log.debug(new Gson().toJson(result));
         String response = Okhttp.postSyncJson(ThirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)), result);
-        //判断返回结果
-        //TODO
         JSONObject auditResult = new JSONObject(response);
         String auditId = auditResult.get("auditid").toString();
         return auditId;

@@ -28,6 +28,7 @@ import static com.dreawer.appxauth.consts.ThirdParty.*;
 @Slf4j
 public class TokenManager {
 
+
     private static Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
 
 

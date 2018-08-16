@@ -12,7 +12,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * <CODE>Swagger2</CODE>
- *
  * @author fenrir
  * @Date 18-8-8
  */

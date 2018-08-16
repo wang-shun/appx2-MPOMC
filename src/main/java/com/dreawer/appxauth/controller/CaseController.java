@@ -1,6 +1,5 @@
 package com.dreawer.appxauth.controller;
 
-import com.dreawer.appxauth.RibbonClient.CallRequest;
 import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
 import com.dreawer.appxauth.RibbonClient.form.ViewSku;
 import com.dreawer.appxauth.domain.AppCase;
@@ -14,14 +13,10 @@ import com.dreawer.appxauth.form.UserCaseCountForm;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.QueryType;
 import com.dreawer.appxauth.lang.SaleMode;
-import com.dreawer.appxauth.manager.AppManager;
-import com.dreawer.appxauth.service.CaseService;
-import com.dreawer.appxauth.service.UserCaseService;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.ResponseCodeRepository;
 import com.dreawer.responsecode.rcdt.Success;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -30,7 +25,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -57,17 +51,7 @@ public class CaseController extends BaseController {
 
     private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 
-    @Autowired
-    private CaseService caseService; //方案信息服务
 
-    @Autowired
-    private AppManager appManager;
-
-    @Autowired
-    private CallRequest callRequest;
-
-    @Autowired
-    private UserCaseService userCaseService;
 
     /**
      * 请求展示小程序方案
@@ -117,7 +101,7 @@ public class CaseController extends BaseController {
         String remark = null;
         //调用商品服务查询商品信息
         ViewSku sku = null;
-        ViewGoods viewGoods = callRequest.goodDetail(spuId, userId);
+        ViewGoods viewGoods = serviceManager.goodDetail(spuId, userId);
         List<ViewSku> skus = viewGoods.getSkus();
         for (ViewSku viewSku : skus) {
             String id = viewSku.getId();

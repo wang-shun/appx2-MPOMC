@@ -1,12 +1,10 @@
 package com.dreawer.appxauth.controller;
 
-import com.dreawer.appxauth.manager.AppManager;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.Success;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +25,6 @@ import java.io.IOException;
 @Slf4j
 public class DeployController extends BaseController {
 
-    @Autowired
-    private AppManager appManager;
 
     /**
      * 提交小程序模板

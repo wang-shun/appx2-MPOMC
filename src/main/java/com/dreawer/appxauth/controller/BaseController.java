@@ -1,25 +1,24 @@
 package com.dreawer.appxauth.controller;
 
 
+import com.dreawer.appxauth.manager.AppManager;
+import com.dreawer.appxauth.manager.ServiceManager;
+import com.dreawer.appxauth.service.*;
+import com.dreawer.appxauth.utils.CallRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 import org.codehaus.xfire.util.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.security.*;
-import java.security.spec.InvalidParameterSpecException;
+import java.security.AlgorithmParameters;
+import java.security.Security;
 import java.sql.Timestamp;
-
-import static com.dreawer.appxauth.consts.MessageConstants.ERR_OTHER;
 
 /**
  * <code>BaseController</code> 它是本系统中所有控制器的基类，提供控制器通用方法的实现。
@@ -31,6 +30,31 @@ import static com.dreawer.appxauth.consts.MessageConstants.ERR_OTHER;
 
 @Controller
 public class BaseController {
+
+    @Autowired
+    protected UserCaseService userCaseService;
+
+    @Autowired
+    protected AuthService authService;
+
+    @Autowired
+    protected AppManager appManager;
+
+    @Autowired
+    protected ServiceManager serviceManager;
+
+    @Autowired
+    protected CallRequest callRequest;
+
+    @Autowired
+    protected AppUserService appUserService;
+
+    @Autowired
+    protected AppService appService;
+
+    @Autowired
+    protected CaseService caseService; //方案信息服务
+
 
     protected Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 

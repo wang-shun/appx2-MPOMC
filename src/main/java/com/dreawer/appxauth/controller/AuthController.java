@@ -1,6 +1,5 @@
 package com.dreawer.appxauth.controller;
 
-import com.dreawer.appxauth.RibbonClient.CallRequest;
 import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.Application;
 import com.dreawer.appxauth.domain.ApplicationUser;
@@ -11,21 +10,13 @@ import com.dreawer.appxauth.form.WxLoginForm;
 import com.dreawer.appxauth.lang.AppType;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.ResultType;
-import com.dreawer.appxauth.manager.AppManager;
-import com.dreawer.appxauth.manager.ServiceManager;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
-import com.dreawer.appxauth.service.AppService;
-import com.dreawer.appxauth.service.AppUserService;
-import com.dreawer.appxauth.service.AuthService;
-import com.dreawer.appxauth.service.UserCaseService;
-import com.dreawer.appxauth.utils.Okhttp;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -52,25 +43,6 @@ public class AuthController extends BaseController {
     private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    AppManager appManager;
-
-    @Autowired
-    ServiceManager serviceManager;
-
-    @Autowired
-    CallRequest callRequest;
-
-    @Autowired
-    UserCaseService userCaseService;
-    @Autowired
-    AppUserService appUserService;
-
-    @Autowired
-    AppService appService;
 
     /**
      * 跳转小程序授权页面
@@ -122,7 +94,6 @@ public class AuthController extends BaseController {
         //如果该小程序用户在该企业未注册
         if (applicationUser == null) {
             String response = appManager.wxLogin(appid, code);
-            logger.info("=======================" + response);
             JSONObject jsonObject = new JSONObject(response);
             String openId = (String) jsonObject.get("openid");
             String sessionKey = (String) jsonObject.get("session_key");
@@ -139,14 +110,13 @@ public class AuthController extends BaseController {
 
 
             //在用户中心注册
-            String userInfo = serviceManager.signUp(petName, oid, mugshot);
-            JSONObject info = new JSONObject(userInfo);
-            logger.debug(info);
-            if (!info.get("code").equals("000000")) {
+            ResponseCode responseCode = serviceManager.signUp(petName, oid, mugshot);
+            if (!responseCode.getCode().equals("000000")) {
                 return Error.APPSERVER;
             }
+            JSONObject JsonData = new JSONObject(responseCode.getData().toString());
             //获取id保存为应用用户主键
-            String id = (String) info.getJSONObject("data").get("id");
+            String id = (String) JsonData.get("id");
             applicationUser = new ApplicationUser();
             applicationUser.setAppid(appid);
             applicationUser.setOpenid(openId);
@@ -155,19 +125,17 @@ public class AuthController extends BaseController {
             applicationUser.setCreateTime(getNow());
             applicationUser.setId(id);
             appUserService.save(applicationUser);
-            return Success.SUCCESS(info);
+            return Success.SUCCESS(id);
         } else {
             //调用用户中心获得令牌
             String id = applicationUser.getId();
             Map<String, Object> param = new HashMap<>();
             param.put("userId", id);
-            String response = serviceManager.getAuthorization(param);
-            //String response = Okhttp.postSyncJson("/login/wxapp", param);
-            JSONObject info = new JSONObject(response);
-            if (!info.get("code").equals("000000")) {
+            ResponseCode authorization = serviceManager.getAuthorization(param);
+            if (!authorization.getCode().equals("000000")) {
                 return Error.APPSERVER;
             }
-            return Success.SUCCESS(response);
+            return Success.SUCCESS(authorization.getData());
         }
 
     }
@@ -231,7 +199,7 @@ public class AuthController extends BaseController {
         }
         //获取组织ID
 
-        String organizationId = callRequest.addOrganzation(param);
+        String organizationId = serviceManager.addOrganzation(param);
 
         //创建应用
         Application application = new Application();

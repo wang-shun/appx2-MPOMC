@@ -4,7 +4,6 @@ import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.XmlParser;
-import com.dreawer.appxauth.service.UserCaseService;
 import com.dreawer.appxauth.utils.aes.AesException;
 import com.dreawer.appxauth.utils.aes.WXBizMsgCrypt;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,9 +39,6 @@ import static com.dreawer.appxauth.consts.ThirdParty.*;
 @RequestMapping("/event")
 @Slf4j
 public class EventController extends BaseController {
-
-    @Autowired
-    private UserCaseService userCaseService;
 
 
     /**

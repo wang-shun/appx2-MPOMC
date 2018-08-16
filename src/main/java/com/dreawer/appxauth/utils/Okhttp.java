@@ -1,7 +1,6 @@
 package com.dreawer.appxauth.utils;
 
 import com.google.gson.Gson;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.log4j.Logger;
 
@@ -15,7 +14,6 @@ import java.util.Map;
  * @author fenrir
  * @Date 18-7-3
  */
-@Slf4j
 public class Okhttp {
 
     private static Logger logger = Logger.getLogger(Okhttp.class); // 日志记录器
@@ -62,7 +60,7 @@ public class Okhttp {
             // 请求失败的回调
             @Override
             public void onFailure(Call call, IOException e) {
-                log.error("请求失败", e);
+                logger.error("请求失败", e);
             }
 
             // 请求成功的回调
@@ -147,8 +145,6 @@ public class Okhttp {
         Response response = call.execute();
         // 将response转化成String
         String responseStr = response.body().string();
-        log.debug("http response :" + responseStr);
-        logger.info("http response :" + responseStr);
         return responseStr;
 
     }
@@ -172,8 +168,6 @@ public class Okhttp {
         Response response = call.execute();
         // 将response转化成String
         String responseStr = response.body().string();
-        log.debug("http response :" + responseStr);
-        logger.info("http response :" + responseStr);
         return responseStr;
 
     }

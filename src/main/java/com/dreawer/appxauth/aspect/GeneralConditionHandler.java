@@ -1,8 +1,11 @@
 package com.dreawer.appxauth.aspect;
 
+import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -28,17 +31,30 @@ import java.util.Properties;
 
 @Aspect
 @Component
+@Slf4j
 public class GeneralConditionHandler {
 
     private static Logger logger = LoggerFactory.getLogger(GeneralConditionHandler.class);
 
-
-    @Pointcut("execution(* com.dreawer.appxauth.manager.AppManager.*(..))")
+    /**
+     * 处理微信API切面
+     */
+    @Pointcut("execution(* com.dreawer.appxauth.utils.Okhttp.*(..))")
     public void errcode() {
     }
 
+    /**
+     * 控制器切面
+     */
     @Pointcut("execution(com.dreawer.responsecode.rcdt.ResponseCode com.dreawer.appxauth.controller.*.*(..))")
     public void response() {
+    }
+
+    /**
+     * 其他服务调用切面
+     */
+    @Pointcut("execution(com.dreawer.responsecode.rcdt.ResponseCode com.dreawer.appxauth.utils.CallRequest.*(..))")
+    public void eurekaResponse() {
     }
 
     /**
@@ -50,9 +66,16 @@ public class GeneralConditionHandler {
      */
     @Around("errcode()")
     public Object CheckCode(ProceedingJoinPoint pjp) throws Throwable {
+        log.info("外部调用开始");
+        Object[] args = pjp.getArgs();
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            log.info("外部请求传递参数" + i + 1 + ":" + new Gson().toJson(arg));
+        }
         String proceed = (String) pjp.proceed();
+        log.info("请求结果:" + proceed);
         JSONObject jsonObject = new JSONObject(proceed);
-
+        log.info("外部调用结束");
         String message = null;
         String errcode = null;
 
@@ -101,17 +124,49 @@ public class GeneralConditionHandler {
             result = (ResponseCode) pjp.proceed();
 
         } catch (Throwable e) {
-            logger.info("error on", e);
             if (e instanceof WxAppException) {
+                log.info("微信错误码异常:" + new Gson().toJson(e));
                 result = Error.EXT_REQUEST(((WxAppException) e).getErrMsg());
+            } else if (e instanceof ResponseCodeException) {
+                log.info("服务调用异常:" + new Gson().toJson(((ResponseCodeException) e).getResponseCode()));
+                result = ((ResponseCodeException) e).getResponseCode();
             } else if (e instanceof Exception) {
+                log.info("异常", e);
                 result = Error.APPSERVER;
             } else {
+                log.info("异常", e);
                 result = Error.APPSERVER;
             }
 
         }
         return result;
+    }
+
+    /**
+     * 处理其他服务调用请求,如果结果不为成功则抛出异常
+     *
+     * @param pjp
+     * @return
+     * @throws Throwable
+     */
+    @Around("eurekaResponse()")
+    public Object handleEurekaException(ProceedingJoinPoint pjp) throws Throwable {
+        ResponseCode result;
+        log.info("Eureka服务调用开始");
+        Object[] args = pjp.getArgs();
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            log.info("Eureka服务请求传递参数" + i + 1 + ":" + new Gson().toJson(arg));
+        }
+        result = (ResponseCode) pjp.proceed();
+        log.info("请求结果:" + new Gson().toJson(result));
+        log.info("Eureka服务调用结束");
+        if (!result.getCode().equals("000000")) {
+            throw new ResponseCodeException(result);
+        }
+        return result;
+
+
     }
 }
 
