@@ -139,12 +139,13 @@ public class CaseController extends BaseController {
         UserCase userCase = new UserCase();
         userCase.setSaleMode(SaleMode.DEFAULT);
         //获取后台url
+        //设置类目名和ID
         userCase.setBackendUrl("1111");
         userCase.setName(viewGoods.getName());
         userCase.setAppName(null);
         userCase.setThemeName(viewGoods.getName());
         userCase.setDurationType(period + "月");
-        userCase.setThemeId(UUID.randomUUID().toString().replace("-", ""));
+        userCase.setCategoryId(UUID.randomUUID().toString().replace("-", ""));
         userCase.setClientName("测试用户" + Math.random() * 10);
         userCase.setClientContact("测试地址");
         userCase.setExpireDate(invalidTime);
@@ -218,7 +219,7 @@ public class CaseController extends BaseController {
             userCase.setClientContact(form.getContact());
             userCase.setAppId(form.getAppid());
             userCase.setPublishStatus(form.getPublishStatus());
-            userCase.setThemeId(form.getThemeId());
+            userCase.setCategoryId(form.getCategoryId());
             userCase.setName(form.getName());
             userCase.setAppName(form.getAppName());
 
@@ -230,9 +231,6 @@ public class CaseController extends BaseController {
                     if (appId != null) {
                         String response = appManager.getLatestAuditStatus(appId);
                         JSONObject auditStatus = new JSONObject(response);
-                        if (auditStatus == null) {
-                            continue;
-                        }
                         if (auditStatus.has("status")) {
                             if (auditStatus.getInt("status") == 0) {
                                 node.setPublishStatus(PublishStatus.UNPUBLISHED);

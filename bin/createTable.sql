@@ -61,8 +61,8 @@ CREATE TABLE `appx_user_case` (
   COMMENT '预览图url',
   `rel_qr`   varchar(128)           DEFAULT NULL
   COMMENT '发布图url',
-  `thm_id`   varchar(128)           DEFAULT NULL
-  COMMENT '小程序主题id',
+  `cat_id`   varchar(128)           DEFAULT NULL
+  COMMENT '类目id',
   `app_id`   char(32)               DEFAULT NULL
   COMMENT '小程序appId',
   `domain`   varchar(128)           DEFAULT NULL

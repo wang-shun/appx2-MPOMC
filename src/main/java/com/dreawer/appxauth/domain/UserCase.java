@@ -38,7 +38,7 @@ public class UserCase extends BaseDomain {
 
     private String releaseQRcode = null; //发布Url
 
-    private String themeId = null; //小程序主题Id
+    private String categoryId = null; //小程序主题Id
 
     private String appId = null; //小程序appId
 

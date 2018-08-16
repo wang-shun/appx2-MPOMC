@@ -85,8 +85,8 @@
         <if test="releaseQRcode!=null">
             rel_qr=#{releaseQRcode},
         </if>
-        <if test="themeId!=null">
-            thm_id=#{themeId},
+        <if test="categoryId!=null">
+            cat_id=#{categoryId},
         </if>
         <if test="appId!=null">
             app_id=#{appId},
@@ -141,11 +141,11 @@
         INSERT INTO appx_user_case(id,name,sal_mode,cli_nam,cli_cnt,dele_ph,app_nam,thm_nam,
         <!-- 订单列表,用;分割 -->
         orders,
-        bac_url,pub_sts,app_id,thm_id,exp_date,domain,dur_type,crer_id,cre_tim)
+        bac_url,pub_sts,app_id,cat_id,exp_date,domain,dur_type,crer_id,cre_tim)
         VALUES
         (#{id},#{name},#{saleMode},#{clientName},#{clientContact},#{delegatePhone},#{appName},#{themeName},#{orderIds},
 
-        #{backendUrl},#{publishStatus},#{appId},#{themeId},#{expireDate},
+        #{backendUrl},#{publishStatus},#{appId},#{categoryId},#{expireDate},
         #{domain},#{durationType},#{createrId},#{createTime})
     </insert>
 
@@ -170,8 +170,8 @@
             <if test="userCase.appId!=null">
                 AND app_id = #{userCase.appId}
             </if>
-            <if test="userCase.themeId!=null">
-                AND thm_id = #{userCase.themeId}
+            <if test="userCase.categoryId!=null">
+                AND cat_id = #{userCase.categoryId}
             </if>
             <if test="startTime != null">
                 AND cre_tim &gt;= #{startTime}
@@ -224,8 +224,8 @@
             <if test="userCase.appId!=null">
                 AND app_id = #{userCase.appId}
             </if>
-            <if test="userCase.themeId!=null">
-                AND thm_id = #{userCase.themeId}
+            <if test="userCase.categoryId!=null">
+                AND cat_id = #{userCase.categoryId}
             </if>
             <if test="startTime != null">
                 AND cre_tim &gt;= #{startTime}
@@ -287,7 +287,7 @@
 
     <!-- 基本信息 -->
     <sql id="basicFields">
-        id, name, logo, sto_id, bac_url, app_nam, thm_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
+        id, name, logo, sto_id, bac_url, app_nam, cat_id, thm_nam, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
     </sql>
 
     <!-- ================================================================================== -->
@@ -301,7 +301,7 @@
         <result property="backendUrl" column="bac_url"/>
         <result property="previewQRcode" column="pre_qr"/>
         <result property="releaseQRcode" column="rel_qr"/>
-        <result property="themeId" column="thm_id"/>
+        <result property="categoryId" column="cat_id"/>
         <result property="appId" column="app_id"/>
         <result property="domain" column="domain"/>
         <result property="category" column="category"/>
