@@ -80,7 +80,7 @@ public class AuthController extends BaseController {
     @PostMapping("/sns")
     @ResponseBody
     public ResponseCode getOpenId(@RequestBody @Valid WxLoginForm form, BindingResult result
-    ) throws IOException {
+    ) throws Exception {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }

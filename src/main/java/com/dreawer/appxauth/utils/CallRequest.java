@@ -23,7 +23,7 @@ public class CallRequest {
     @Autowired
     RestTemplate restTemplate;
 
-    public ResponseCode restPost(String url, Object data, String userId) {
+    public ResponseCode restPost(String url, Object data, String userId) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);

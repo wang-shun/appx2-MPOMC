@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public class ServiceManager {
      * @param mugshot
      * @return
      */
-    public ResponseCode signUp(String petName, String appid, String mugshot) throws IOException {
+    public ResponseCode signUp(String petName, String appid, String mugshot) throws Exception {
         Map<String, Object> param = new HashMap<>();
         param.put("mugshot", mugshot);
         param.put("petName", petName);
@@ -53,7 +52,7 @@ public class ServiceManager {
      *
      * @return
      */
-    public ResponseCode getAuthorization(Map map) {
+    public ResponseCode getAuthorization(Map map) throws Exception {
         return callRequest.restPost(ThirdParty.REQ_LOGIN_WXAPP, map, null);
     }
 
@@ -63,7 +62,7 @@ public class ServiceManager {
      *
      * @return
      */
-    public String addOrganzation(Map<String, Object> param) {
+    public String addOrganzation(Map<String, Object> param) throws Exception {
         ResponseCode responseCode = callRequest.restPost(addOrganizationUrl, param, null);
         return responseCode.getData().toString();
 
