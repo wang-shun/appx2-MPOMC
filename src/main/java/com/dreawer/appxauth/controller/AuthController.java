@@ -134,7 +134,9 @@ public class AuthController extends BaseController {
             if (!authorization.getCode().equals("000000")) {
                 return Error.APPSERVER;
             }
-            return Success.SUCCESS(authorization.getData());
+            JSONObject JsonData = new JSONObject(authorization.getData().toString());
+            String token = (String) JsonData.get("token");
+            return Success.SUCCESS(token);
         }
 
     }
