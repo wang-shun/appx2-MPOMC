@@ -5,7 +5,6 @@ import com.dreawer.appxauth.domain.Application;
 import com.dreawer.appxauth.domain.ApplicationUser;
 import com.dreawer.appxauth.domain.AuthInfo;
 import com.dreawer.appxauth.domain.UserCase;
-import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.form.WxLoginForm;
 import com.dreawer.appxauth.lang.AppType;
 import com.dreawer.appxauth.lang.PublishStatus;
@@ -151,7 +150,7 @@ public class AuthController extends BaseController {
     @GetMapping("/wxApp")
     @ResponseBody
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
-                                  @RequestParam("expires_in") String expiresIn) throws IOException, ResponseCodeException {
+                                  @RequestParam("expires_in") String expiresIn) throws Exception {
 
         AuthorizeInfo authorizeInfo = TokenManager.getAuthorizeInfo(authorizationCode);
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
