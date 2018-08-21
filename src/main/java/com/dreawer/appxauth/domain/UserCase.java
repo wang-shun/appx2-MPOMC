@@ -32,8 +32,6 @@ public class UserCase extends BaseDomain {
 
     private String appName = null; //小程序名称
 
-    private String themeName = null; //主题名称
-
     private String previewQRcode = null; //预览Url
 
     private String releaseQRcode = null; //发布Url
@@ -44,7 +42,9 @@ public class UserCase extends BaseDomain {
 
     private String domain = null; //小程序域名
 
-    private String category = null; //业务别名
+    private String category = null; //解决方案类目
+
+    private String appCategory = null; //小程序类目
 
     private SaleMode saleMode = null; //销售状态 ADVANCE-预售,DEFALUT 默认
 

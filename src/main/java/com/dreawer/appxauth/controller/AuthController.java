@@ -11,6 +11,7 @@ import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
+import com.dreawer.appxauth.model.Authorizer_info;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
@@ -218,7 +219,7 @@ public class AuthController extends BaseController {
         }
 
         userCase.setLogo(authorizeInfo.getAuthorizer_info().getHead_img());
-        userCase.setCategory(category);
+        userCase.setAppCategory(category);
         userCase.setAppName(authorizeInfo.getAuthorizer_info().getNick_name());
 
         //无失败原因则授权条件具备
@@ -236,25 +237,25 @@ public class AuthController extends BaseController {
             return Success.SUCCESS(userCase);
         }
 
-        String auditResult = "";
+        StringBuilder auditResult = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
             ResultType type = list.get(i);
             if (type.equals(ResultType.PERMISSIONDENIED)) {
-                auditResult += ";用户未提供开发权限";
+                auditResult.append(";用户未提供开发权限");
             }
             //如果非ECS小程序为个人主体
             if (type.equals(ResultType.PRINCIPAL) && !userCase.getDomain().equals("https://ecs.dreawer.com/")) {
-                auditResult += ";小程序主体需为企业";
+                auditResult.append(";小程序主体需为企业");
             }
             if (type.equals(ResultType.NAME)) {
-                auditResult += ";小程序名称未填写";
+                auditResult.append(";小程序名称未填写");
             }
             if (type.equals(ResultType.CATEGORY)) {
-                auditResult += ";小程序类目未填写";
+                auditResult.append(";小程序类目未填写");
             }
         }
-
-        userCase.setAuditResult(auditResult);
+        String result = auditResult.substring(1, auditResult.length() - 1);
+        userCase.setAuditResult(result);
         userCase.setPublishStatus(PublishStatus.MISSINGCONDITION);
         userCaseService.updateUserCase(userCase);
         return Success.SUCCESS(userCase);
@@ -278,7 +279,11 @@ public class AuthController extends BaseController {
         String appId = application.getAppId();
         String authorizerInfo = appManager.getAuthorizerInfo(appId);
         AuthorizeInfo authorizeInfo = new Gson().fromJson(authorizerInfo, AuthorizeInfo.class);
-        return Success.SUCCESS(authorizeInfo.getAuthorizer_info());
+        Authorizer_info authorizer_info = authorizeInfo.getAuthorizer_info();
+        Map<String, Object> params = new HashMap<>();
+        params.put("nickName", authorizer_info.getNick_name());
+        params.put("logo", authorizer_info.getHead_img());
+        return Success.SUCCESS(authorizer_info);
     }
 
 

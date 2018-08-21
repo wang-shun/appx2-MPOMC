@@ -140,22 +140,18 @@ public class CaseController extends BaseController {
         userCase.setSaleMode(SaleMode.DEFAULT);
         //获取后台url
         //设置类目名和ID
-        userCase.setBackendUrl("1111");
+        userCase.setBackendUrl("https://appx.dreawer.com/management");
         userCase.setName(viewGoods.getName());
         userCase.setAppName(null);
-        userCase.setThemeName(viewGoods.getName());
         userCase.setDurationType(period + "月");
-        userCase.setCategoryId(UUID.randomUUID().toString().replace("-", ""));
-        userCase.setClientName("测试用户" + Math.random() * 10);
-        userCase.setClientContact("测试地址");
+        userCase.setCategoryId(viewGoods.getGroups().get(0).getId());
+        userCase.setClientName("");
+        userCase.setClientContact("");
         userCase.setExpireDate(invalidTime);
-        if (!StringUtils.isEmpty(number)) {
-            userCase.setDelegatePhone(number);
-        }
         userCase.setOrderIds(orderId);
         userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
-        userCase.setCreaterId(UUID.randomUUID().toString().replace("-", ""));
-        userCase.setDomain("http://retail.dreawer.com");
+        userCase.setCreaterId(userid);
+        userCase.setDomain("http://api.dreawer.com");
         userCase.setCreateTime(new Timestamp(System.currentTimeMillis()));
         userCaseService.addUserCase(userCase);
         return Success.SUCCESS(userCase);
