@@ -58,11 +58,16 @@ public class TokenManager {
     }
 
     public static String getPreAuthCode() throws IOException {
-        if (redisUtils.get(REDIS_PREFIX + PRE_AUTH_CODE) == null) {
-            return initPre_auth_code();
-        } else {
-            return (String) redisUtils.get(REDIS_PREFIX + PRE_AUTH_CODE);
-        }
+        /**
+         * 预授权码只能使用一次,所以无需缓存,先注释掉
+         */
+//        if (redisUtils.get(REDIS_PREFIX + PRE_AUTH_CODE) == null) {
+//            return initPre_auth_code();
+//        } else {
+//            return (String) redisUtils.get(REDIS_PREFIX + PRE_AUTH_CODE);
+//        }
+
+        return initPre_auth_code();
     }
 
 
@@ -91,12 +96,13 @@ public class TokenManager {
         String response = Okhttp.postSyncJson(ThirdParty.URL_GET_PRE_AUTH_CODE(), params);
         Pre_auth_code_info auth_code_info = new Gson().fromJson(response, Pre_auth_code_info.class);
         String pre_auth_code = auth_code_info.getPre_auth_code();
-        Integer expiresIn = Integer.parseInt(auth_code_info.getExpires_in());
-        //防止刷新时间差,在token失效前半小时删除该记录
-        expiresIn = expiresIn - 60 * 5;
-        //accessToken失效时间为5分钟,之后会重新刷新
-        logger.info("到期时间" + expiresIn);
-        redisUtils.set(REDIS_PREFIX + PRE_AUTH_CODE, pre_auth_code, expiresIn);
+        //预授权码一次扫码只能使用一次 不用缓存到redis
+//        Integer expiresIn = Integer.parseInt(auth_code_info.getExpires_in());
+//        //防止刷新时间差,在token失效前半小时删除该记录
+//        expiresIn = expiresIn - 60 * 5;
+//        //accessToken失效时间为5分钟,之后会重新刷新
+//        logger.info("到期时间" + expiresIn);
+//        redisUtils.set(REDIS_PREFIX + PRE_AUTH_CODE, pre_auth_code, expiresIn);
         return pre_auth_code;
     }
 
