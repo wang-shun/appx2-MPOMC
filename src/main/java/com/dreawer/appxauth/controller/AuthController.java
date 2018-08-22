@@ -15,6 +15,7 @@ import com.dreawer.appxauth.model.Authorizer_info;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController extends BaseController {
     private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 
@@ -156,6 +158,7 @@ public class AuthController extends BaseController {
                                   @RequestParam("expires_in") String expiresIn) throws Exception {
 
         AuthorizeInfo authorizeInfo = TokenManager.getAuthorizeInfo(authorizationCode);
+        log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
 
         AuthInfo authInfo = authService.findByAppid(appid);
