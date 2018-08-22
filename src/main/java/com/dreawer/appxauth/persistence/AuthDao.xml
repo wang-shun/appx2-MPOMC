@@ -59,7 +59,7 @@
             app_type = #{appType},
         </if>
         <if test="createrId!=null">
-            crer_id =#{createrId},
+            cre_id =#{createrId},
         </if>
         <if test="createTime!=null">
             cre_tim = #{createTime},
@@ -84,7 +84,7 @@
         , ref_tkn
         , expire_in
         , app_type
-        , crer_id
+        , cre_id
         , cre_tim
         , upd_tim
     </sql>
