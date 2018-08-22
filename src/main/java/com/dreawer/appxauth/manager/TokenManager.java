@@ -110,7 +110,7 @@ public class TokenManager {
         Map<String, String> params = new HashMap<>();
         params.put(COMPONENT_APPID, ThirdParty.APPID());
         params.put(AUTHORIZATION_CODE, authorizationCode);
-        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_API_QUERY_AUTH(), params);
+        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_AUTHORIZER_INFO(), params);
         return new Gson().fromJson(response, AuthorizeInfo.class);
     }
 
