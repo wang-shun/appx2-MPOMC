@@ -2,6 +2,7 @@ package com.dreawer.appxauth.consts;
 
 import com.dreawer.appxauth.manager.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,34 +35,41 @@ public class ThirdParty {
 
 
     //开放平台授权相关
+    @Value("${thirdParty.APPX_THIRDPARTY_APPID}")
     public String APPX_THIRDPARTY_APPID = null;
+    @Value("${thirdParty.APPX_APP_SECRET}")
     public String APPX_APP_SECRET = null;
+    @Value("${thirdParty.PROGRAM_VALIDATE_TOKEN}")
     public String PROGRAM_VALIDATE_TOKEN = null;
+    @Value("${thirdParty.PROGRAM_ENCODING_AES_KEY}")
     public String PROGRAM_ENCODING_AES_KEY = null;
+    @Value("${thirdParty.APPX_REDIRECT_URL}")
+    public String APPX_REDIRECT_URL = null;
 
     //接口URL
-    public String COMPONENT_ACCESS_TOKEN_QUERY = null;
-    public String PRE_AUTH_CODE_QUERY = null;
-    public String API_QUERY_AUTH = null;
-    public String HTTP_WXAPP_AUTH_PAGE = null;
-    public String APPX_REDIRECT_URL = null;
-    public String MODIFY_DOMAIN_QUERY = null;
-    public String COMMIT_CODE_QUERY = null;
-    public String QR_CODE_QUERY = null;
-    public String CATEGORY_QUERY = null;
-    public String GET_PAGE_QUERY = null;
-    public String SUBMIT_AUDIT_QUERY = null;
-    public String LATEST_AUDIT_STATUS_QUERY = null;
-    public String RELEASE_QUERY = null;
-    public String APP_INFO = null;
-    public String AUTHORIZER_INFO_QUERY = null;
-    public String WX_LOGIN = null;
-    public String GET_LATEST_AUDITSTATUS = null;
+    public String COMPONENT_ACCESS_TOKEN_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_component_token";
+    public String PRE_AUTH_CODE_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=";
+    public String API_QUERY_AUTH = "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=";
+    public String HTTP_WXAPP_AUTH_PAGE = "https://mp.weixin.qq.com/cgi-bin/componentloginpage";
+    public String MODIFY_DOMAIN_QUERY = "https://api.weixin.qq.com/wxa/modify_domain?access_token=";
+    public String COMMIT_CODE_QUERY = "https://api.weixin.qq.com/wxa/commit?access_token=";
+    public String QR_CODE_QUERY = "https://api.weixin.qq.com/wxa/get_qrcode?access_token=";
+    public String CATEGORY_QUERY = "https://api.weixin.qq.com/wxa/get_category?access_token=";
+    public String GET_PAGE_QUERY = "https://api.weixin.qq.com/wxa/get_page?access_token=";
+    public String SUBMIT_AUDIT_QUERY = "https://api.weixin.qq.com/wxa/submit_audit?access_token=";
+    public String LATEST_AUDIT_STATUS_QUERY = "https://api.weixin.qq.com/wxa/get_latest_auditstatus?access_token=";
+    public String RELEASE_QUERY = "https://api.weixin.qq.com/wxa/release?access_token=";
+    public String APP_INFO = "https://api.weixin.qq.com/cgi-bin/account/getaccountbasicinfo?access_token=";
+    public String AUTHORIZER_INFO_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=";
+    public String WX_LOGIN = "https://api.weixin.qq.com/sns/component/jscode2session?";
+    public String GET_LATEST_AUDITSTATUS = "https://api.weixin.qq.com/wxa/get_latest_auditstatus?access_token=";
 
     //其他服务调用
     //用户中心调用小程序用户首次注册
+    @Value("${thirdParty.REQ_SIGNUP_WXAPP}")
     public String REQ_SIGNUP_WXAPP = null;
     //小程序登录
+    @Value("${thirdParty.REQ_LOGIN_WXAPP}")
     public String REQ_LOGIN_WXAPP = null;
 
 
@@ -203,13 +211,7 @@ public class ThirdParty {
         this.tokenManager = tokenManager;
     }
 
-    public String getAPPX_THIRDPARTY_APPID() {
-        return APPX_THIRDPARTY_APPID;
-    }
 
-    public void setAPPX_THIRDPARTY_APPID(String APPX_THIRDPARTY_APPID) {
-        this.APPX_THIRDPARTY_APPID = APPX_THIRDPARTY_APPID;
-    }
 
     public String getAPPX_APP_SECRET() {
         return APPX_APP_SECRET;

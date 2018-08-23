@@ -1,7 +1,5 @@
 package com.dreawer.appxauth.domain;
 
-import com.dreawer.appxauth.lang.AlertStatus;
-
 import java.sql.Timestamp;
 
 /**

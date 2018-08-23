@@ -5,7 +5,7 @@
 
     <groupId>com.dreawer</groupId>
     <artifactId>mpomc</artifactId>
-    <version>0.0.48-SNAPSHOT</version>
+    <version>0.0.49-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>mpomc</name>
@@ -40,6 +40,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>

@@ -1,10 +1,9 @@
 package com.dreawer.appxauth.persistence;
 
-import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.domain.CaseCountForm;
+import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.persistence.mybatis.MyBatisBaseDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
