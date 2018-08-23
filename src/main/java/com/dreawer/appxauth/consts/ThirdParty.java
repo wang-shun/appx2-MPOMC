@@ -1,6 +1,7 @@
 package com.dreawer.appxauth.consts;
 
 import com.dreawer.appxauth.manager.TokenManager;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import java.io.IOException;
 @Configuration
 @ConfigurationProperties(prefix = "thirdParty")
 @Component
+@Data
 public class ThirdParty {
 
     @Autowired
@@ -65,6 +67,7 @@ public class ThirdParty {
     public String REQ_SIGNUP_WXAPP = null;
     //小程序登录
     public String REQ_LOGIN_WXAPP = null;
+
 
 
     public String APPID() {
@@ -245,6 +248,14 @@ public class ThirdParty {
 
     public void setReqLoginWxapp(String reqLoginWxapp) {
         REQ_LOGIN_WXAPP = reqLoginWxapp;
+    }
+
+    public String getAPPX_THIRDPARTY_APPID() {
+        return APPX_THIRDPARTY_APPID;
+    }
+
+    public void setAPPX_THIRDPARTY_APPID(String APPX_THIRDPARTY_APPID) {
+        this.APPX_THIRDPARTY_APPID = APPX_THIRDPARTY_APPID;
     }
 }
 
