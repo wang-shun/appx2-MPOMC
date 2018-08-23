@@ -155,9 +155,240 @@ public class ThirdParty {
         return AUTHORIZER_INFO_QUERY + tokenManager.getComponentAccessToken();
     }
 
+    public static String getComponentAppid() {
+        return COMPONENT_APPID;
+    }
+
+    public static String getComponentAccessToken() {
+        return COMPONENT_ACCESS_TOKEN;
+    }
+
+    public static String getComponentAppsecret() {
+        return COMPONENT_APPSECRET;
+    }
+
+    public static String getComponentVerifyTicket() {
+        return COMPONENT_VERIFY_TICKET;
+    }
+
+    public static String getAuthorizationCode() {
+        return AUTHORIZATION_CODE;
+    }
+
+    public static String getPreAuthCode() {
+        return PRE_AUTH_CODE;
+    }
+
+    public static String getRedirectUrl() {
+        return REDIRECT_URL;
+    }
+
+    public static String getAuthType() {
+        return AUTH_TYPE;
+    }
+
+    public static String getAuthorizerAppid() {
+        return AUTHORIZER_APPID;
+    }
+
+    public static String getPERSIONAL() {
+        return PERSIONAL;
+    }
+
     /**
      * @ConfigurationProperties 只会调用非静态的set方法
      */
 
+    public TokenManager getTokenManager() {
+        return tokenManager;
+    }
+
+    public void setTokenManager(TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
+    }
+
+    public String getAPPX_THIRDPARTY_APPID() {
+        return APPX_THIRDPARTY_APPID;
+    }
+
+    public void setAPPX_THIRDPARTY_APPID(String APPX_THIRDPARTY_APPID) {
+        this.APPX_THIRDPARTY_APPID = APPX_THIRDPARTY_APPID;
+    }
+
+    public String getAPPX_APP_SECRET() {
+        return APPX_APP_SECRET;
+    }
+
+    public void setAPPX_APP_SECRET(String APPX_APP_SECRET) {
+        this.APPX_APP_SECRET = APPX_APP_SECRET;
+    }
+
+    public String getPROGRAM_VALIDATE_TOKEN() {
+        return PROGRAM_VALIDATE_TOKEN;
+    }
+
+    public void setPROGRAM_VALIDATE_TOKEN(String PROGRAM_VALIDATE_TOKEN) {
+        this.PROGRAM_VALIDATE_TOKEN = PROGRAM_VALIDATE_TOKEN;
+    }
+
+    public String getPROGRAM_ENCODING_AES_KEY() {
+        return PROGRAM_ENCODING_AES_KEY;
+    }
+
+    public void setPROGRAM_ENCODING_AES_KEY(String PROGRAM_ENCODING_AES_KEY) {
+        this.PROGRAM_ENCODING_AES_KEY = PROGRAM_ENCODING_AES_KEY;
+    }
+
+    public String getCOMPONENT_ACCESS_TOKEN_QUERY() {
+        return COMPONENT_ACCESS_TOKEN_QUERY;
+    }
+
+    public void setCOMPONENT_ACCESS_TOKEN_QUERY(String COMPONENT_ACCESS_TOKEN_QUERY) {
+        this.COMPONENT_ACCESS_TOKEN_QUERY = COMPONENT_ACCESS_TOKEN_QUERY;
+    }
+
+    public String getPRE_AUTH_CODE_QUERY() {
+        return PRE_AUTH_CODE_QUERY;
+    }
+
+    public void setPRE_AUTH_CODE_QUERY(String PRE_AUTH_CODE_QUERY) {
+        this.PRE_AUTH_CODE_QUERY = PRE_AUTH_CODE_QUERY;
+    }
+
+    public String getAPI_QUERY_AUTH() {
+        return API_QUERY_AUTH;
+    }
+
+    public void setAPI_QUERY_AUTH(String API_QUERY_AUTH) {
+        this.API_QUERY_AUTH = API_QUERY_AUTH;
+    }
+
+    public String getHTTP_WXAPP_AUTH_PAGE() {
+        return HTTP_WXAPP_AUTH_PAGE;
+    }
+
+    public void setHTTP_WXAPP_AUTH_PAGE(String HTTP_WXAPP_AUTH_PAGE) {
+        this.HTTP_WXAPP_AUTH_PAGE = HTTP_WXAPP_AUTH_PAGE;
+    }
+
+    public String getAPPX_REDIRECT_URL() {
+        return APPX_REDIRECT_URL;
+    }
+
+    public void setAPPX_REDIRECT_URL(String APPX_REDIRECT_URL) {
+        this.APPX_REDIRECT_URL = APPX_REDIRECT_URL;
+    }
+
+    public String getMODIFY_DOMAIN_QUERY() {
+        return MODIFY_DOMAIN_QUERY;
+    }
+
+    public void setMODIFY_DOMAIN_QUERY(String MODIFY_DOMAIN_QUERY) {
+        this.MODIFY_DOMAIN_QUERY = MODIFY_DOMAIN_QUERY;
+    }
+
+    public String getCOMMIT_CODE_QUERY() {
+        return COMMIT_CODE_QUERY;
+    }
+
+    public void setCOMMIT_CODE_QUERY(String COMMIT_CODE_QUERY) {
+        this.COMMIT_CODE_QUERY = COMMIT_CODE_QUERY;
+    }
+
+    public String getQR_CODE_QUERY() {
+        return QR_CODE_QUERY;
+    }
+
+    public void setQR_CODE_QUERY(String QR_CODE_QUERY) {
+        this.QR_CODE_QUERY = QR_CODE_QUERY;
+    }
+
+    public String getCATEGORY_QUERY() {
+        return CATEGORY_QUERY;
+    }
+
+    public void setCATEGORY_QUERY(String CATEGORY_QUERY) {
+        this.CATEGORY_QUERY = CATEGORY_QUERY;
+    }
+
+    public String getGET_PAGE_QUERY() {
+        return GET_PAGE_QUERY;
+    }
+
+    public void setGET_PAGE_QUERY(String GET_PAGE_QUERY) {
+        this.GET_PAGE_QUERY = GET_PAGE_QUERY;
+    }
+
+    public String getSUBMIT_AUDIT_QUERY() {
+        return SUBMIT_AUDIT_QUERY;
+    }
+
+    public void setSUBMIT_AUDIT_QUERY(String SUBMIT_AUDIT_QUERY) {
+        this.SUBMIT_AUDIT_QUERY = SUBMIT_AUDIT_QUERY;
+    }
+
+    public String getLATEST_AUDIT_STATUS_QUERY() {
+        return LATEST_AUDIT_STATUS_QUERY;
+    }
+
+    public void setLATEST_AUDIT_STATUS_QUERY(String LATEST_AUDIT_STATUS_QUERY) {
+        this.LATEST_AUDIT_STATUS_QUERY = LATEST_AUDIT_STATUS_QUERY;
+    }
+
+    public String getRELEASE_QUERY() {
+        return RELEASE_QUERY;
+    }
+
+    public void setRELEASE_QUERY(String RELEASE_QUERY) {
+        this.RELEASE_QUERY = RELEASE_QUERY;
+    }
+
+    public String getAPP_INFO() {
+        return APP_INFO;
+    }
+
+    public void setAPP_INFO(String APP_INFO) {
+        this.APP_INFO = APP_INFO;
+    }
+
+    public String getAUTHORIZER_INFO_QUERY() {
+        return AUTHORIZER_INFO_QUERY;
+    }
+
+    public void setAUTHORIZER_INFO_QUERY(String AUTHORIZER_INFO_QUERY) {
+        this.AUTHORIZER_INFO_QUERY = AUTHORIZER_INFO_QUERY;
+    }
+
+    public String getWX_LOGIN() {
+        return WX_LOGIN;
+    }
+
+    public void setWX_LOGIN(String WX_LOGIN) {
+        this.WX_LOGIN = WX_LOGIN;
+    }
+
+    public String getGET_LATEST_AUDITSTATUS() {
+        return GET_LATEST_AUDITSTATUS;
+    }
+
+    public void setGET_LATEST_AUDITSTATUS(String GET_LATEST_AUDITSTATUS) {
+        this.GET_LATEST_AUDITSTATUS = GET_LATEST_AUDITSTATUS;
+    }
+
+    public String getREQ_SIGNUP_WXAPP() {
+        return REQ_SIGNUP_WXAPP;
+    }
+
+    public void setREQ_SIGNUP_WXAPP(String REQ_SIGNUP_WXAPP) {
+        this.REQ_SIGNUP_WXAPP = REQ_SIGNUP_WXAPP;
+    }
+
+    public String getREQ_LOGIN_WXAPP() {
+        return REQ_LOGIN_WXAPP;
+    }
+
+    public void setREQ_LOGIN_WXAPP(String REQ_LOGIN_WXAPP) {
+        this.REQ_LOGIN_WXAPP = REQ_LOGIN_WXAPP;
+    }
 }
 
