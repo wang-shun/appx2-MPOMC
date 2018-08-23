@@ -1,5 +1,6 @@
 package com.dreawer.appxauth.controller;
 
+import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.manager.TokenManager;
@@ -27,8 +28,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 
-import static com.dreawer.appxauth.consts.ThirdParty.*;
-
 /**
  * <CODE>EventController</CODE>
  * 消息事件接受控制器
@@ -43,6 +42,9 @@ public class EventController extends BaseController {
 
     @Autowired
     private TokenManager tokenManager;
+
+    @Autowired
+    private ThirdParty thirdParty;
 
     /**
      * 接收微信定时推送的component_verify_ticket
@@ -67,14 +69,14 @@ public class EventController extends BaseController {
             String encryptMsg = sb.toString();
 
             log.error("encryptMsg_" + encryptMsg);
-            log.error("PROGRAM_VALIDATE_TOKEN" + "====" + PROGRAM_VALIDATE_TOKEN);
-            log.error("PROGRAM_ENCODING_AES_KEY" + "====" + PROGRAM_ENCODING_AES_KEY);
-            log.error("APPX_THIRDPARTY_APPID" + "====" + APPX_THIRDPARTY_APPID);
+            log.error("PROGRAM_VALIDATE_TOKEN" + "====" + thirdParty.PROGRAM_VALIDATE_TOKEN);
+            log.error("PROGRAM_ENCODING_AES_KEY" + "====" + thirdParty.PROGRAM_ENCODING_AES_KEY);
+            log.error("APPX_THIRDPARTY_APPID" + "====" + thirdParty.APPX_THIRDPARTY_APPID);
 
             Document document = new SAXReader().read(new ByteArrayInputStream(encryptMsg.getBytes("UTF-8")));
             String msg = document.getRootElement().element("Encrypt").getStringValue();
             //解密消息
-            WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(PROGRAM_VALIDATE_TOKEN, PROGRAM_ENCODING_AES_KEY, APPX_THIRDPARTY_APPID);
+            WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(thirdParty.PROGRAM_VALIDATE_TOKEN, thirdParty.PROGRAM_ENCODING_AES_KEY, thirdParty.APPX_THIRDPARTY_APPID);
             String decryptMsg = wxcpt.decrypt(msg);
             //xml转换为对象
             JAXBContext context = JAXBContext.newInstance(XmlParser.class);
@@ -113,7 +115,7 @@ public class EventController extends BaseController {
         //解密接受xml数据
         Document document = new SAXReader().read(new ByteArrayInputStream(xmlContext.getBytes("UTF-8")));
         String encryptMsg = document.getRootElement().element("Encrypt").getStringValue();
-        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(PROGRAM_VALIDATE_TOKEN, PROGRAM_ENCODING_AES_KEY, APPX_THIRDPARTY_APPID);
+        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(thirdParty.PROGRAM_VALIDATE_TOKEN, thirdParty.PROGRAM_ENCODING_AES_KEY, thirdParty.APPX_THIRDPARTY_APPID);
         String decryptMsg = wxcpt.decrypt(encryptMsg);
         //xml转换为对象
         JAXBContext context = JAXBContext.newInstance(XmlParser.class);

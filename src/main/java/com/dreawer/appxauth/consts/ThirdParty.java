@@ -36,10 +36,10 @@ public class ThirdParty {
 
 
     //开放平台授权相关
-    public static String APPX_THIRDPARTY_APPID = null;
-    public static String APPX_APP_SECRET = null;
-    public static String PROGRAM_VALIDATE_TOKEN = null;
-    public static String PROGRAM_ENCODING_AES_KEY = null;
+    public String APPX_THIRDPARTY_APPID = null;
+    public String APPX_APP_SECRET = null;
+    public String PROGRAM_VALIDATE_TOKEN = null;
+    public String PROGRAM_ENCODING_AES_KEY = null;
 
     //接口URL
     public String COMPONENT_ACCESS_TOKEN_QUERY = null;
