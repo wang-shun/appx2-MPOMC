@@ -10,6 +10,8 @@ import com.dreawer.appxauth.utils.RedisUtils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,8 +28,14 @@ import static com.dreawer.appxauth.consts.ThirdParty.*;
  */
 
 @Slf4j
+@Component
 public class TokenManager {
 
+    @Autowired
+    private Okhttp okhttp;
+
+    @Autowired
+    private ThirdParty thirdParty;
 
     private static Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
 
@@ -49,7 +57,7 @@ public class TokenManager {
     }
 
 
-    public static String getComponentAccessToken() throws IOException {
+    public String getComponentAccessToken() throws IOException {
         if (redisUtils.get(REDIS_PREFIX + COMPONENT_ACCESS_TOKEN) == null) {
             return initComponentAccessToken();
         } else {
@@ -57,7 +65,7 @@ public class TokenManager {
         }
     }
 
-    public static String getPreAuthCode() throws IOException {
+    public String getPreAuthCode() throws IOException {
         /**
          * 预授权码只能使用一次,所以无需缓存,先注释掉
          */
@@ -71,12 +79,12 @@ public class TokenManager {
     }
 
 
-    public static String initComponentAccessToken() throws IOException {
+    public String initComponentAccessToken() throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put(COMPONENT_APPID, ThirdParty.APPID());
-        params.put(COMPONENT_APPSECRET, ThirdParty.APPSECRT());
+        params.put(COMPONENT_APPID, thirdParty.APPID());
+        params.put(COMPONENT_APPSECRET, thirdParty.APPSECRT());
         params.put(COMPONENT_VERIFY_TICKET, getVerifyTicket());
-        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_BASIC_TOKEN(), params);
+        String response = okhttp.postSyncJson(thirdParty.URL_GET_BASIC_TOKEN(), params);
         logger.info(response);
         Component_access_token token = new Gson().fromJson(response, Component_access_token.class);
         String accessToken = token.getComponent_access_token();
@@ -86,14 +94,14 @@ public class TokenManager {
         logger.info("到期时间" + expiresIn);
         //accessToken失效时间为1.5小时,之后会重新刷新
         redisUtils.set(REDIS_PREFIX + COMPONENT_ACCESS_TOKEN, accessToken, expiresIn);
-        logger.info("刷新token成功" + COMPONENT_ACCESS_TOKEN);
+        logger.info("刷新token成功" + accessToken);
         return accessToken;
     }
 
-    public static String initPre_auth_code() throws IOException {
+    public String initPre_auth_code() throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put(COMPONENT_APPID, ThirdParty.APPID());
-        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_PRE_AUTH_CODE(), params);
+        params.put(COMPONENT_APPID, thirdParty.APPID());
+        String response = okhttp.postSyncJson(thirdParty.URL_GET_PRE_AUTH_CODE(), params);
         Pre_auth_code_info auth_code_info = new Gson().fromJson(response, Pre_auth_code_info.class);
         String pre_auth_code = auth_code_info.getPre_auth_code();
         //预授权码一次扫码只能使用一次 不用缓存到redis
@@ -106,11 +114,11 @@ public class TokenManager {
         return pre_auth_code;
     }
 
-    public static AuthorizeInfo getAuthorizeInfo(String authorizationCode) throws IOException {
+    public AuthorizeInfo getAuthorizeInfo(String authorizationCode) throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put(COMPONENT_APPID, ThirdParty.APPID());
+        params.put(COMPONENT_APPID, thirdParty.APPID());
         params.put(AUTHORIZATION_CODE, authorizationCode);
-        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_AUTHORIZER_INFO(), params);
+        String response = okhttp.postSyncJson(thirdParty.URL_GET_AUTHORIZER_INFO(), params);
         return new Gson().fromJson(response, AuthorizeInfo.class);
     }
 

@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,11 @@ import java.util.Map;
 public class AuthController extends BaseController {
     private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 
+    @Autowired
+    private TokenManager tokenManager;
 
+    @Autowired
+    private ThirdParty thirdParty;
 
     /**
      * 跳转小程序授权页面
@@ -55,7 +60,7 @@ public class AuthController extends BaseController {
     @RequestMapping("/getAuthPage")
     public ModelAndView getAuthPage() throws IOException {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("authUrl", ThirdParty.URL_AUTH_PAGE());
+        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE());
         mv.setViewName("authorize");
         return mv;
     }
@@ -69,7 +74,7 @@ public class AuthController extends BaseController {
     @RequestMapping("/getToken")
     @ResponseBody
     public String getToken() throws IOException {
-        return TokenManager.getComponentAccessToken();
+        return tokenManager.getComponentAccessToken();
     }
 
 
@@ -157,7 +162,7 @@ public class AuthController extends BaseController {
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
                                   @RequestParam("expires_in") String expiresIn) throws Exception {
 
-        AuthorizeInfo authorizeInfo = TokenManager.getAuthorizeInfo(authorizationCode);
+        AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
         log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
 

@@ -39,7 +39,7 @@ public class GeneralConditionHandler {
     /**
      * 处理微信API切面
      */
-    @Pointcut("execution(* com.dreawer.appxauth.utils.Okhttp.*(..))")
+    @Pointcut("execution(java.lang.String com.dreawer.appxauth.utils.Okhttp.*(..))")
     public void errcode() {
     }
 
@@ -78,8 +78,6 @@ public class GeneralConditionHandler {
         log.info("外部调用结束");
         String message = null;
         String errcode = null;
-
-
         //如果微信返回报错信息
         if (jsonObject.has("errcode")) {
             errcode = (String) jsonObject.get("errcode");

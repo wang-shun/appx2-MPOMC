@@ -39,6 +39,12 @@ public class AppManager {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private Okhttp okhttp;
+
+    @Autowired
+    private ThirdParty thirdParty;
+
 
     /**
      * 获取用户小程序authorizerAccessToken
@@ -67,7 +73,7 @@ public class AppManager {
         //首先判断主体信息
         String authorizerInfo = getAuthorizerInfo(appid);
         AuthorizeInfo authorizeInfo = new Gson().fromJson(authorizerInfo, AuthorizeInfo.class);
-        if (authorizeInfo.getAuthorizer_info().getPrincipal_name().equals(ThirdParty.PERSIONAL)) {
+        if (authorizeInfo.getAuthorizer_info().getPrincipal_name().equals(thirdParty.PERSIONAL)) {
             list.add(ResultType.PRINCIPAL);
         }
         //然后判断权限
@@ -125,7 +131,7 @@ public class AppManager {
         params.put("wsrequestdomain", domain);
         params.put("uploaddomain", domain);
         params.put("downloaddomain", domain);
-        String response = Okhttp.postSyncJson(ThirdParty.URL_MODIFY_DOMAIN(getAccessToken(appid)), params);
+        String response = okhttp.postSyncJson(thirdParty.URL_MODIFY_DOMAIN(getAccessToken(appid)), params);
         return response;
     }
 
@@ -167,7 +173,7 @@ public class AppManager {
         ext.put("extAppid", appid);
         ext.put("ext", extJson);
         param.put("ext_json", ext.toString());
-        String response = Okhttp.postSyncJson(ThirdParty.URL_COMMIT_CODE(getAccessToken(appid)), param);
+        String response = okhttp.postSyncJson(thirdParty.URL_COMMIT_CODE(getAccessToken(appid)), param);
         return response;
     }
 
@@ -179,7 +185,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getPreviewQR(String appid) throws IOException {
-        String response = Okhttp.getSync(ThirdParty.URL_QR_CODE(getAccessToken(appid)));
+        String response = okhttp.getSync(thirdParty.URL_QR_CODE(getAccessToken(appid)));
         return response;
     }
 
@@ -191,7 +197,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getCategory(String appid) throws IOException {
-        return Okhttp.getSync(ThirdParty.URL_CATEGORY_QUERY(getAccessToken(appid)));
+        return okhttp.getSync(thirdParty.URL_CATEGORY_QUERY(getAccessToken(appid)));
     }
 
     /**
@@ -202,7 +208,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getPage(String appid) throws IOException {
-        return Okhttp.getSync(ThirdParty.URL_GET_PAGE(getAccessToken(appid)));
+        return okhttp.getSync(thirdParty.URL_GET_PAGE(getAccessToken(appid)));
     }
 
 
@@ -240,7 +246,7 @@ public class AppManager {
         Map<String, Object> result = new HashMap<>();
         result.put("item_list", array);
         log.debug(new Gson().toJson(result));
-        String response = Okhttp.postSyncJson(ThirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)), result);
+        String response = okhttp.postSyncJson(thirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)), result);
         JSONObject auditResult = new JSONObject(response);
         String auditId = auditResult.get("auditid").toString();
         return auditId;
@@ -254,7 +260,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getLatestAuditStatus(String appid) throws IOException {
-        return Okhttp.getSync(ThirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)));
+        return okhttp.getSync(thirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)));
     }
 
 
@@ -267,7 +273,7 @@ public class AppManager {
      */
     public String release(String appid) throws IOException {
         Map<String, Object> items = new HashMap<>();
-        return Okhttp.postSyncJson(ThirdParty.URL_RELEASE_QUERY(getAccessToken(appid)), items);
+        return okhttp.postSyncJson(thirdParty.URL_RELEASE_QUERY(getAccessToken(appid)), items);
     }
 
     /**
@@ -278,7 +284,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getAppInfo(String appid) throws IOException {
-        String response = Okhttp.getSync(ThirdParty.URL_GET_APP_INFO(getAccessToken(appid)));
+        String response = okhttp.getSync(thirdParty.URL_GET_APP_INFO(getAccessToken(appid)));
         return response;
     }
 
@@ -291,9 +297,9 @@ public class AppManager {
      */
     public String getAuthorizerInfo(String appid) throws IOException {
         Map<String, Object> params = new HashMap<>();
-        params.put(ThirdParty.COMPONENT_APPID, ThirdParty.APPX_THIRDPARTY_APPID);
-        params.put(ThirdParty.AUTHORIZER_APPID, appid);
-        String response = Okhttp.postSyncJson(ThirdParty.URL_GET_AUTHORIZER_INFO(), params);
+        params.put(thirdParty.COMPONENT_APPID, thirdParty.APPX_THIRDPARTY_APPID);
+        params.put(thirdParty.AUTHORIZER_APPID, appid);
+        String response = okhttp.postSyncJson(thirdParty.URL_GET_AUTHORIZER_INFO(), params);
         return response;
     }
 
@@ -306,9 +312,8 @@ public class AppManager {
      * @throws IOException
      */
     public String wxLogin(String appid, String jsCode) throws IOException {
-        return Okhttp.getSync(ThirdParty.URL_WX_LOGIN(appid, jsCode));
+        return okhttp.getSync(thirdParty.URL_WX_LOGIN(appid, jsCode));
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.dreawer.appxauth.utils;
 import com.google.gson.Gson;
 import okhttp3.*;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,12 +15,13 @@ import java.util.Map;
  * @author fenrir
  * @Date 18-7-3
  */
+@Component
 public class Okhttp {
 
-    private static Logger logger = Logger.getLogger(Okhttp.class); // 日志记录器
+    private Logger logger = Logger.getLogger(Okhttp.class); // 日志记录器
 
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 
     /**
@@ -27,7 +29,7 @@ public class Okhttp {
      *
      * @param url url
      */
-    public static String getSync(String url) throws IOException {
+    public String getSync(String url) throws IOException {
         // 创建OKHttpClient对象
         OkHttpClient okHttpClient = new OkHttpClient();
         // 创建一个Request
@@ -47,7 +49,7 @@ public class Okhttp {
      *
      * @param url url
      */
-    public static void getAsyn(String url) {
+    public void getAsyn(String url) {
         // 创建OKHttpClient对象
         OkHttpClient okHttpClient = new OkHttpClient();
         // 创建一个Request
@@ -80,7 +82,7 @@ public class Okhttp {
      * @return responseStr
      * @throws IOException
      */
-    public static String postSync(String url, Map<String, String> params)
+    public String postSync(String url, Map<String, String> params)
             throws IOException {
         // RequestBody
         RequestBody requestBody;
@@ -131,7 +133,7 @@ public class Okhttp {
      * @return
      * @throws IOException
      */
-    public static String postSyncJson(String url, Object RequestJsonbean) throws IOException {
+    public String postSyncJson(String url, Object RequestJsonbean) throws IOException {
 
         Gson gson = new Gson();
         String json = gson.toJson(RequestJsonbean);
@@ -156,7 +158,7 @@ public class Okhttp {
      * @return
      * @throws IOException
      */
-    public static String SimplepostSyncJson(String url, String json) throws IOException {
+    public String SimplepostSyncJson(String url, String json) throws IOException {
 
         OkHttpClient okHttpClient = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, json);

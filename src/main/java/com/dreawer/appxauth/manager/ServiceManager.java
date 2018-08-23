@@ -27,6 +27,9 @@ public class ServiceManager {
     @Autowired
     private CallRequest callRequest;
 
+    @Autowired
+    private ThirdParty thirdParty;
+
     private String addOrganizationUrl = "http://cc/orgaize/add";
 
     private String goodDetail = "http://gc/goods/detail";
@@ -44,7 +47,7 @@ public class ServiceManager {
         param.put("mugshot", mugshot);
         param.put("petName", petName);
         param.put("appId", appid);
-        return callRequest.restPost(ThirdParty.REQ_SIGNUP_WXAPP, param, null);
+        return callRequest.restPost(thirdParty.REQ_SIGNUP_WXAPP, param, null);
     }
 
     /**
@@ -53,7 +56,7 @@ public class ServiceManager {
      * @return
      */
     public ResponseCode getAuthorization(Map map) throws Exception {
-        return callRequest.restPost(ThirdParty.REQ_LOGIN_WXAPP, map, null);
+        return callRequest.restPost(thirdParty.REQ_LOGIN_WXAPP, map, null);
     }
 
 
