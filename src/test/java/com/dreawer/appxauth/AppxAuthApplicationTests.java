@@ -1,8 +1,6 @@
 package com.dreawer.appxauth;
 
-import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.model.AuthorizeInfo;
-import com.dreawer.appxauth.utils.Okhttp;
 import com.google.gson.Gson;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
@@ -21,11 +19,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.dreawer.appxauth.consts.ThirdParty.COMPONENT_APPID;
-import static com.dreawer.appxauth.consts.ThirdParty.PRE_AUTH_CODE_QUERY;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -64,14 +57,6 @@ public class AppxAuthApplicationTests {
     }
 
 
-    @Test
-    public void test() throws IOException {
-        Map<String, String> params = new HashMap<>();
-        params.put(COMPONENT_APPID, ThirdParty.APPID());
-        String token = "11_V-FyLPcGYhFsiwLWOlBOJfGzjtVIQ2cYVKYo18c2lnJgeLO88LAuIflecU0-zoVm05F2EaqpTLJmjM7SJyq-dIIbYGhQaBwmaW5IzCmFmhfgquyEhIWFUzlR5-r1xyKpcG-nGzdfX9qVqGM4WUHcAJASQD";
-        String response = Okhttp.postSyncJson(PRE_AUTH_CODE_QUERY + token, params);
-        System.out.println(response);
-    }
 
     @Test
     public void test2() throws IOException, JSONException {

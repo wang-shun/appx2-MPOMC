@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,8 @@ import static com.dreawer.appxauth.consts.ThirdParty.*;
 @Slf4j
 public class EventController extends BaseController {
 
+    @Autowired
+    private TokenManager tokenManager;
 
     /**
      * 接收微信定时推送的component_verify_ticket
@@ -81,7 +84,7 @@ public class EventController extends BaseController {
             String componentVerifyTicket = parser.getComponentVerifyTicket();
             log.error("ticket=" + componentVerifyTicket);
             //保存令牌
-            TokenManager.setVerifyTicket(componentVerifyTicket);
+            tokenManager.setVerifyTicket(componentVerifyTicket);
             resp.getWriter().write("success");
             return resp;
         } catch (Exception e) {

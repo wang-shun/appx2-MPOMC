@@ -1,6 +1,5 @@
 package com.dreawer.appxauth.manager;
 
-import com.dreawer.appxauth.AppxAuthApplication;
 import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.Component_access_token;
@@ -37,22 +36,20 @@ public class TokenManager {
     @Autowired
     private ThirdParty thirdParty;
 
-    private static Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
-
-
-    private static final String REDIS_PREFIX = "redis_";
-
-    private static RedisUtils redisUtils = AppxAuthApplication.applicationContext.getBean(RedisUtils.class);
+    private final String REDIS_PREFIX = "redis_";
+    private Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
+    @Autowired
+    private RedisUtils redisUtils;
 
     public TokenManager() {
 
     }
 
-    public static String getVerifyTicket() {
+    public String getVerifyTicket() {
         return (String) redisUtils.get(REDIS_PREFIX + COMPONENT_VERIFY_TICKET);
     }
 
-    public static void setVerifyTicket(String verifyTicket) {
+    public void setVerifyTicket(String verifyTicket) {
         redisUtils.set(REDIS_PREFIX + COMPONENT_VERIFY_TICKET, verifyTicket);
     }
 
