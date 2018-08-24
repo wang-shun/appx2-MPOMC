@@ -27,7 +27,7 @@
         )
         VALUES (
         #{id}
-        ,#{appid}
+        ,#{appId}
         ,#{organizationId}
         )
     </insert>
@@ -49,8 +49,8 @@
     <!-- ================================================================================== -->
     <resultMap id="ApplicationResultMap" type="com.dreawer.appxauth.domain.Application">
         <result property="id" column="id"/>
-        <result property="appid" column="appid"/>
-        <result property="oid" column="organizationId"/>
+        <result property="appId" column="appid"/>
+        <result property="organizationId" column="oid"/>
     </resultMap>
 
 </mapper>
