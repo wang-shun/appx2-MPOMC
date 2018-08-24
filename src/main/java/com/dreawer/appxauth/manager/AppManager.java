@@ -315,5 +315,8 @@ public class AppManager {
         return okhttp.getSync(thirdParty.URL_WX_LOGIN(appid, jsCode));
     }
 
+    public String test() {
+        return okhttp.test("111");
+    }
 
 }

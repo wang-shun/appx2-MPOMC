@@ -174,5 +174,12 @@ public class Okhttp {
 
     }
 
+    public String test(String key) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("errcode", 41004);
+        param.put("errmsg", "hahahah");
+        return new Gson().toJson(param);
+    }
+
 
 }

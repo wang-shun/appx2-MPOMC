@@ -3,7 +3,7 @@ package com.dreawer.appxauth.exception;
 
 import com.dreawer.responsecode.rcdt.ResponseCode;
 
-public class ResponseCodeException extends Exception {
+public class ResponseCodeException extends RuntimeException {
     private ResponseCode responseCode;
 
     protected ResponseCodeException() {

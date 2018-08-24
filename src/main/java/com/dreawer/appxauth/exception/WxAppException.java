@@ -7,7 +7,7 @@ package com.dreawer.appxauth.exception;
  * @author fenrir
  * @Date 17-11-22
  */
-public class WxAppException extends Exception {
+public class WxAppException extends RuntimeException {
 
     private static final long serialVersionUID = -665549282813032095L;
 

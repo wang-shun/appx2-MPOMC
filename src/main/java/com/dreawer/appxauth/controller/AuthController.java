@@ -334,4 +334,9 @@ public class AuthController extends BaseController {
         JSONArray category_list = jsonObject.getJSONArray("category_list");
         return Success.SUCCESS(category_list);
     }
+
+    public ResponseCode test() {
+        appManager.test();
+        return Success.SUCCESS("1111");
+    }
 }

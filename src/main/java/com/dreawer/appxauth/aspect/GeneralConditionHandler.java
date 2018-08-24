@@ -2,10 +2,12 @@ package com.dreawer.appxauth.aspect;
 
 import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.exception.WxAppException;
+import com.dreawer.appxauth.utils.PropertiesUtils;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,7 +16,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,7 +33,7 @@ import org.springframework.stereotype.Component;
 public class GeneralConditionHandler {
 
     @Autowired
-    private Environment env;
+    private PropertiesUtils propertiesUtils;
 
     private static Logger logger = LoggerFactory.getLogger(GeneralConditionHandler.class);
 
@@ -82,10 +83,10 @@ public class GeneralConditionHandler {
         if (jsonObject.has("errcode")) {
             errcode = jsonObject.get("errcode") + "";
             //遍历返回码获得错误信息文本
-            message = new String(env.getProperty(errcode).getBytes("ISO-8859-1"), "UTF-8");
+            message = propertiesUtils.getProperties(errcode);
             log.info("微信错误信息:" + message);
             //其他错误信息
-            if (message == null) {
+            if (StringUtils.isEmpty(message)) {
                 message = (String) jsonObject.get("errmsg");
             }
 
