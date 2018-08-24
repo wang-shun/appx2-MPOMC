@@ -17,6 +17,7 @@ import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -302,4 +303,24 @@ public class AuthController extends BaseController {
     }
 
 
+    /**
+     * 获取小程序类目信息
+     *
+     * @param storeId
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/appCategory")
+    @ResponseBody
+    public ResponseCode getAppCategory(@RequestParam("storeId") String storeId) throws IOException {
+        Application application = appService.findById(storeId);
+        if (application == null) {
+            return Error.DB("未找到该应用");
+        }
+        String appId = application.getAppId();
+        String category = appManager.getCategory(appId);
+        JSONObject jsonObject = new JSONObject(category);
+        JSONArray category_list = jsonObject.getJSONArray("category_list");
+        return Success.SUCCESS(category_list);
+    }
 }
