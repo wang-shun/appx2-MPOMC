@@ -80,7 +80,7 @@ public class GeneralConditionHandler {
         String errcode = null;
         //如果微信返回报错信息
         if (jsonObject.has("errcode")) {
-            errcode = (String) jsonObject.get("errcode");
+            errcode = jsonObject.get("errcode") + "";
             //遍历返回码获得错误信息文本
             Properties pro = new Properties();
             InputStream inStr = ClassLoader.getSystemResourceAsStream("returnCode.properties");
