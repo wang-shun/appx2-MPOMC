@@ -166,7 +166,7 @@ public class CaseController extends BaseController {
      */
     @ApiOperation(value = "分页查询解决方案列表")
     @ApiImplicitParam(name = "status", value = "ONGING进行中,EXPIRED已失效,ALL全部")
-    @RequestMapping(value = "/query/{status}", method = RequestMethod.POST)
+    @PostMapping(value = "/query/{status}")
     public @ResponseBody
     ResponseCode query(@PathVariable("status") String status, @RequestBody @Valid CaseQueryForm form, BindingResult result) {
         if (result.hasErrors()) {

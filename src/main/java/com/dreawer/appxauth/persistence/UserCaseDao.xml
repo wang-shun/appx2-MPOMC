@@ -205,7 +205,9 @@
                         AND pub_sts = 'EXPIRED'
                     </when>
                     <when test="status == 'ALL'">
-                        AND pub_sts =#{userCase.publishStatus}
+                        <if test="userCase.publishStatus!=null">
+                            AND pub_sts =#{userCase.publishStatus}
+                        </if>
                     </when>
                 </choose>
             </if>
