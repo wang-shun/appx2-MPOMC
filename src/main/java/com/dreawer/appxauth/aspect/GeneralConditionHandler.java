@@ -6,7 +6,6 @@ import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,11 +13,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * <CODE>GeneralConditionHandler</CODE>
@@ -33,6 +30,9 @@ import java.util.Properties;
 @Component
 @Slf4j
 public class GeneralConditionHandler {
+
+    @Autowired
+    private Environment env;
 
     private static Logger logger = LoggerFactory.getLogger(GeneralConditionHandler.class);
 
@@ -82,18 +82,8 @@ public class GeneralConditionHandler {
         if (jsonObject.has("errcode")) {
             errcode = jsonObject.get("errcode") + "";
             //遍历返回码获得错误信息文本
-            Properties pro = new Properties();
-            InputStream inStr = ClassLoader.getSystemResourceAsStream("returnCode.properties");
-            pro.load(inStr);
-            Enumeration<?> propertyNames = pro.propertyNames();
-            //遍历所有的key
-            while (propertyNames.hasMoreElements()) {
-                String propertyName = (String) propertyNames.nextElement();
-                if (StringUtils.equals(propertyName, errcode)) {
-                    message = pro.getProperty(propertyName);
-                    break;
-                }
-            }
+            message = new String(env.getProperty(errcode).getBytes("ISO-8859-1"), "UTF-8");
+            log.info("微信错误信息:" + message);
             //其他错误信息
             if (message == null) {
                 message = (String) jsonObject.get("errmsg");
