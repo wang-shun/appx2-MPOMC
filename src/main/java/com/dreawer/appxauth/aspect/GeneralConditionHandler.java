@@ -82,7 +82,7 @@ public class GeneralConditionHandler {
         //如果微信返回报错信息
         if (jsonObject.has("errcode")) {
             errcode = jsonObject.get("errcode") + "";
-
+            if (!errcode.equals("0")) {
             //遍历返回码获得错误信息文本
             message = propertiesUtils.getProperties(errcode);
             log.info("微信错误信息:" + message);
@@ -93,7 +93,7 @@ public class GeneralConditionHandler {
 
             //抛出微信错误码异常
             throw new WxAppException(errcode, message);
-
+            }
         }
 
         return proceed;
