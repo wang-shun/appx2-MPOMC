@@ -59,9 +59,9 @@ public class AuthController extends BaseController {
      * @throws IOException
      */
     @RequestMapping("/getAuthPage")
-    public ModelAndView getAuthPage() throws IOException {
+    public ModelAndView getAuthPage(@RequestParam("id") String id) throws IOException {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE());
+        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE(id));
         mv.setViewName("authorize");
         return mv;
     }
@@ -163,12 +163,14 @@ public class AuthController extends BaseController {
      *
      * @param authorizationCode 授权码
      * @param expiresIn         到期时间
+     * @param id                用户解决方案ID
      * @return
      */
     @GetMapping("/wxApp")
     @ResponseBody
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
-                                  @RequestParam("expires_in") String expiresIn) throws Exception {
+                                  @RequestParam("expires_in") String expiresIn,
+                                  @RequestParam("id") String id) throws Exception {
 
         AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
         log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
@@ -238,7 +240,7 @@ public class AuthController extends BaseController {
         List<ResultType> list = appManager.checkAuthorCondition(appid);
         String category = appManager.getCategory(appid);
 
-        UserCase userCase = userCaseService.findUserCaseByAppId(appid);
+        UserCase userCase = userCaseService.findById(id);
         if (userCase == null) {
             return Error.DB("解决方案不存在");
         }

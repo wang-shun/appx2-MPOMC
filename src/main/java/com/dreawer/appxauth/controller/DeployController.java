@@ -65,7 +65,7 @@ public class DeployController extends BaseController {
      * @throws IOException
      */
     @GetMapping("/auditResult")
-    public ResponseCode getLatestAuditstatus(String appid) throws IOException {
+    public ResponseCode getLatestAuditstatus(@RequestParam("appid") String appid) throws IOException {
         String auditStatus = appManager.getLatestAuditStatus(appid);
         JSONObject jsonObject = new JSONObject(auditStatus);
         return Success.SUCCESS(jsonObject);
@@ -79,7 +79,7 @@ public class DeployController extends BaseController {
      * @throws IOException
      */
     @GetMapping("/release")
-    public ResponseCode release(String appid) throws IOException {
+    public ResponseCode release(@RequestParam("appid") String appid) throws IOException {
         String auditStatus = appManager.release(appid);
         JSONObject jsonObject = new JSONObject(auditStatus);
         return Success.SUCCESS(jsonObject);
