@@ -189,7 +189,7 @@ public class AuthController extends BaseController {
             authInfo.setExpireIn(calendar.getTime());
             authInfo.setCreaterId(null);
             authInfo.setCreateTime(getNow());
-            authInfo.setUpdateTIme(getNow());
+            authInfo.setUpdateTime(getNow());
             authService.save(authInfo);
 
         } else {
@@ -204,7 +204,7 @@ public class AuthController extends BaseController {
             authInfo.setAppType(AppType.WXAPP);
             authInfo.setCreaterId(null);
             authInfo.setCreateTime(getNow());
-            authInfo.setUpdateTIme(getNow());
+            authInfo.setUpdateTime(getNow());
             authService.update(authInfo);
         }
 
