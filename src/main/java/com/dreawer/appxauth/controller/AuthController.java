@@ -98,12 +98,13 @@ public class AuthController extends BaseController {
         String oid = form.getOid();
 
         ApplicationUser applicationUser = appUserService.findByAppidAndOrganizationId(appid, oid);
+        String response = appManager.wxLogin(appid, code);
+        JSONObject jsonObject = new JSONObject(response);
+        String openId = (String) jsonObject.get("openid");
+        String sessionKey = (String) jsonObject.get("session_key");
+        Map<String, Object> responseParam = new HashMap<>();
         //如果该小程序用户在该企业未注册
         if (applicationUser == null) {
-            String response = appManager.wxLogin(appid, code);
-            JSONObject jsonObject = new JSONObject(response);
-            String openId = (String) jsonObject.get("openid");
-            String sessionKey = (String) jsonObject.get("session_key");
 
             //获取用户昵称和头像
             String data = decrypt(encryptedData, sessionKey, iv);
@@ -124,6 +125,7 @@ public class AuthController extends BaseController {
             JSONObject JsonData = new JSONObject(responseCode.getData().toString());
             //获取id保存为应用用户主键
             String id = (String) JsonData.get("id");
+            String token = (String) JsonData.get("token");
             applicationUser = new ApplicationUser();
             applicationUser.setAppid(appid);
             applicationUser.setOpenid(openId);
@@ -132,7 +134,9 @@ public class AuthController extends BaseController {
             applicationUser.setCreateTime(getNow());
             applicationUser.setId(id);
             appUserService.save(applicationUser);
-            return Success.SUCCESS(id);
+            responseParam.put("token", token);
+            responseParam.put("openId", openId);
+            return Success.SUCCESS(responseParam);
         } else {
             //调用用户中心获得令牌
             String id = applicationUser.getId();
@@ -144,7 +148,10 @@ public class AuthController extends BaseController {
             }
             JSONObject JsonData = new JSONObject(authorization.getData().toString());
             String token = (String) JsonData.get("token");
-            return Success.SUCCESS(token);
+
+            responseParam.put("token", token);
+            responseParam.put("openId", openId);
+            return Success.SUCCESS(responseParam);
         }
 
     }
