@@ -183,4 +183,15 @@ public class UserCaseDao extends MyBatisBaseDao<UserCase> {
         param.put("endTime", endTime);
         return selectList("findAllByExpireTime", param);
     }
+
+    /**
+     * 查询解决方案详情
+     *
+     * @return
+     */
+    public UserCase findById(String id) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        return selectOne("findById", id);
+    }
 }

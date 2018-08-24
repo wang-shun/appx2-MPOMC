@@ -4,6 +4,7 @@ import com.dreawer.appxauth.lang.AppType;
 import com.dreawer.domain.BaseDomain;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -31,7 +32,7 @@ public class AuthInfo extends BaseDomain {
 
     private String createrId = null;
 
-    private Date createTime = null;
+    private Timestamp createTime = null;
 
-    private Date updateTIme = null;
+    private Timestamp updateTIme = null;
 }

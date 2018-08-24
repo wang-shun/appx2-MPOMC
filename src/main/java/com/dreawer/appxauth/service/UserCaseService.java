@@ -165,4 +165,13 @@ public class UserCaseService {
     public List<UserCase> findAllByExpireTime(Timestamp startTime, Timestamp endTime) {
         return userCaseDao.findAllByExpireTime(startTime, endTime);
     }
+
+    /**
+     * 查询解决方案详情
+     *
+     * @return
+     */
+    public UserCase findById(String id) {
+        return userCaseDao.findById(id);
+    }
 }

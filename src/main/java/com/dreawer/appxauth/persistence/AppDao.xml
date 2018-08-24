@@ -16,6 +16,15 @@
         id = #{id}
     </select>
 
+    <select id="findByAppId" parameterType="Map" resultMap="ApplicationResultMap">
+        SELECT
+        <include refid="basicFields"/>
+        FROM
+        application
+        WHERE
+        appid = #{appId}
+    </select>
+
     <!-- ================================================================================== -->
     <!-- SQL插入																-->
     <!-- ================================================================================== -->

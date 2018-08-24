@@ -216,14 +216,23 @@ public class AuthController extends BaseController {
             param.put("name", authorizeInfo.getAuthorizer_info().getNick_name());
         }
         //获取组织ID
-
+        //如果没有组织则创建,有则返回组织ID
         String organizationId = serviceManager.addOrganzation(param);
 
-        //创建应用
-        Application application = new Application();
-        application.setOrganizationId(organizationId);
-        application.setAppId(appid);
-        appService.save(application);
+        //创建或更新应用
+        Application application = appService.findByAppid(appid);
+        if (application == null) {
+            application = new Application();
+            application.setOrganizationId(organizationId);
+            application.setAppId(appid);
+            appService.save(application);
+        } else {
+            application.setOrganizationId(organizationId);
+            appService.update(application);
+        }
+
+        //创建店铺
+        //TODO
 
         //更新解决方案
         List<ResultType> list = appManager.checkAuthorCondition(appid);

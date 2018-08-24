@@ -31,4 +31,10 @@ public class AppDao extends MyBatisBaseDao<Application> {
         param.put("id", id);
         return selectOne("findById", param);
     }
+
+    public Application findByAppId(String appId) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("appId", appId);
+        return selectOne("findByAppId", param);
+    }
 }

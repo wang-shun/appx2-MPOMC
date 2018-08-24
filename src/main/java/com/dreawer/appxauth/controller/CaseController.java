@@ -76,6 +76,26 @@ public class CaseController extends BaseController {
         }
     }
 
+    /**
+     * 请求展示小程序方案
+     *
+     * @return 查询结果
+     */
+    @GetMapping(REQ_BY_ID)
+    public @ResponseBody
+    ResponseCode findById(@RequestParam("id") String id) {
+        try {
+            UserCase userCase = userCaseService.findById(id);
+            return Success.SUCCESS(userCase);
+        } catch (Exception e) {
+            String log = ERR_OTHER;
+            logger.error(log, e);
+            // 返回失败标志及信息
+            return Error.APPSERVER;
+        }
+    }
+
+
 
     /**
      * 生成小程序订单

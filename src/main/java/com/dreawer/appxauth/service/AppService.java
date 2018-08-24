@@ -30,4 +30,8 @@ public class AppService {
     public Application findById(String id) {
         return appDao.findById(id);
     }
+
+    public Application findByAppid(String appid) {
+        return appDao.findByAppId(appid);
+    }
 }
