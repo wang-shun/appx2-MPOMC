@@ -335,8 +335,5 @@ public class AuthController extends BaseController {
         return Success.SUCCESS(category_list);
     }
 
-    public ResponseCode test() {
-        appManager.test();
-        return Success.SUCCESS("1111");
-    }
+
 }

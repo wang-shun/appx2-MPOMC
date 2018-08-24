@@ -7,6 +7,7 @@ import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.func_info;
 import com.dreawer.appxauth.service.AuthService;
 import com.dreawer.appxauth.utils.Okhttp;
+import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -52,10 +53,12 @@ public class AppManager {
      * @param appid 小程序appid
      * @return
      */
-    public String getAccessToken(String appid) {
+    public String getAccessToken(String appid) throws IOException {
         AuthInfo authInfo = authService.findByAppid(appid);
         if (authInfo != null) {
-            return authInfo.getAccessToken();
+            String accessToken = authInfo.getAccessToken();
+            ResponseCode responseCode = okhttp.testToken(accessToken, appid);
+            return responseCode.getData().toString();
         } else {
             return null;
         }
@@ -315,8 +318,5 @@ public class AppManager {
         return okhttp.getSync(thirdParty.URL_WX_LOGIN(appid, jsCode));
     }
 
-    public String test() {
-        return okhttp.test("111");
-    }
 
 }

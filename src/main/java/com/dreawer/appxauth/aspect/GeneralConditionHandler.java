@@ -71,7 +71,7 @@ public class GeneralConditionHandler {
         Object[] args = pjp.getArgs();
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
-            log.info("外部请求传递参数" + i + 1 + ":" + new Gson().toJson(arg));
+            log.info("外部请求传递参数" + (i + 1) + ":" + new Gson().toJson(arg));
         }
         String proceed = (String) pjp.proceed();
         log.info("请求结果:" + proceed);
@@ -82,6 +82,7 @@ public class GeneralConditionHandler {
         //如果微信返回报错信息
         if (jsonObject.has("errcode")) {
             errcode = jsonObject.get("errcode") + "";
+
             //遍历返回码获得错误信息文本
             message = propertiesUtils.getProperties(errcode);
             log.info("微信错误信息:" + message);

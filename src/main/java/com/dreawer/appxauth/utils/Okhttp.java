@@ -1,8 +1,15 @@
 package com.dreawer.appxauth.utils;
 
+import com.dreawer.appxauth.consts.ThirdParty;
+import com.dreawer.appxauth.manager.TokenManager;
+import com.dreawer.responsecode.rcdt.ResponseCode;
+import com.dreawer.responsecode.rcdt.Success;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,9 +23,16 @@ import java.util.Map;
  * @Date 18-7-3
  */
 @Component
+@Slf4j
 public class Okhttp {
 
     private Logger logger = Logger.getLogger(Okhttp.class); // 日志记录器
+
+    @Autowired
+    private ThirdParty thirdParty;
+
+    @Autowired
+    private TokenManager tokenManager;
 
 
     public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -148,7 +162,6 @@ public class Okhttp {
         // 将response转化成String
         String responseStr = response.body().string();
         return responseStr;
-
     }
 
     /**
@@ -174,12 +187,35 @@ public class Okhttp {
 
     }
 
-    public String test(String key) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("errcode", 41004);
-        param.put("errmsg", "hahahah");
-        return new Gson().toJson(param);
-    }
 
+    public ResponseCode testToken(String accessToken, String appid) throws IOException {
+        // 创建OKHttpClient对象
+        OkHttpClient okHttpClient = new OkHttpClient();
+        // 创建一个Request
+        final Request request = new Request.Builder()
+                .url(thirdParty.URL_CATEGORY_QUERY(accessToken))
+                .build();
+        Call call = okHttpClient.newCall(request);
+        // 返回值为response
+        Response response = call.execute();
+        // 将response转化成String
+        String responseStr = response.body().string();
+        JSONObject jsonObject = new JSONObject(responseStr);
+        log.info("appid为" + appid + "测试Token结果" + responseStr);
+        //如果微信返回报错信息
+        String errcode;
+        if (jsonObject.has("errcode")) {
+            errcode = jsonObject.get("errcode") + "";
+            //42001token过期 重新刷新
+            if (errcode.equals("42001")) {
+                String token = tokenManager.refreshToken(appid);
+                return Success.SUCCESS(token);
+            } else {
+                return Success.SUCCESS(accessToken);
+            }
+        } else {
+            return Success.SUCCESS(accessToken);
+        }
+    }
 
 }

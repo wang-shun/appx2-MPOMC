@@ -31,6 +31,7 @@ public class ThirdParty {
     public static final String REDIRECT_URL = "redirect_uri";
     public static final String AUTH_TYPE = "auth_type";
     public static final String AUTHORIZER_APPID = "authorizer_appid";
+    public static final String AUTHORIZER_REFRESH_TOKEN = "authorizer_refresh_token";
     public static final String PERSIONAL = "个人";
 
 
@@ -63,6 +64,7 @@ public class ThirdParty {
     public String AUTHORIZER_INFO_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=";
     public String WX_LOGIN = "https://api.weixin.qq.com/sns/component/jscode2session?";
     public String GET_LATEST_AUDITSTATUS = "https://api.weixin.qq.com/wxa/get_latest_auditstatus?access_token=";
+    public String REFRESH_TOKEN = "https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=";
 
     //其他服务调用
     //用户中心调用小程序用户首次注册
@@ -85,6 +87,10 @@ public class ThirdParty {
 
     public String URL_GET_LATEST_AUDITSTATUS(String authorizerAccessToken) {
         return GET_LATEST_AUDITSTATUS + authorizerAccessToken;
+    }
+
+    public String URL_REFRESH_TOKEN() throws IOException {
+        return REFRESH_TOKEN + tokenManager.getComponentAccessToken();
     }
 
     public String URL_WX_LOGIN(String appid, String jsCode) throws IOException {

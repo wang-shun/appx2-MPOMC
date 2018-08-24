@@ -1,9 +1,12 @@
 package com.dreawer.appxauth.manager;
 
 import com.dreawer.appxauth.consts.ThirdParty;
+import com.dreawer.appxauth.domain.AuthInfo;
+import com.dreawer.appxauth.model.Authorization_info;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.Component_access_token;
 import com.dreawer.appxauth.model.Pre_auth_code_info;
+import com.dreawer.appxauth.service.AuthService;
 import com.dreawer.appxauth.utils.Okhttp;
 import com.dreawer.appxauth.utils.RedisUtils;
 import com.google.gson.Gson;
@@ -36,10 +39,16 @@ public class TokenManager {
     @Autowired
     private ThirdParty thirdParty;
 
-    private final String REDIS_PREFIX = "redis_";
-    private Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private AuthService authService;
+
+
+    private final String REDIS_PREFIX = "redis_";
+    private Logger logger = Logger.getLogger(TokenManager.class); // 日志记录器
+
 
     public TokenManager() {
 
@@ -119,5 +128,17 @@ public class TokenManager {
         return new Gson().fromJson(response, AuthorizeInfo.class);
     }
 
+    public String refreshToken(String appid) throws IOException {
+        AuthInfo authInfo = authService.findByAppid(appid);
+        Map<String, String> params = new HashMap<>();
+        params.put(COMPONENT_APPID, thirdParty.APPID());
+        params.put(AUTHORIZER_APPID, appid);
+        params.put(AUTHORIZER_REFRESH_TOKEN, authInfo.getRefreshToken());
+        String response = okhttp.postSyncJson(thirdParty.URL_REFRESH_TOKEN(), params);
+        Authorization_info authorization_info = new Gson().fromJson(response, Authorization_info.class);
+        authInfo.setAccessToken(authorization_info.getAuthorizer_access_token());
+        authService.update(authInfo);
+        return authorization_info.getAuthorizer_access_token();
+    }
 }
 
