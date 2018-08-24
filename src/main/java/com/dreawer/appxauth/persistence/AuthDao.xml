@@ -35,7 +35,7 @@
         ,#{appType}
         ,#{createrId}
         ,#{createTime}
-        ,#{updateTIme}
+        ,#{updateTime}
         )
     </insert>
 
@@ -64,8 +64,8 @@
         <if test="createTime!=null">
             cre_tim = #{createTime},
         </if>
-        <if test="updateTIme!=null">
-            upd_tim = #{updateTIme}
+        <if test="updateTime!=null">
+            upd_tim = #{updateTime}
         </if>
         WHERE
         id = #{id}
