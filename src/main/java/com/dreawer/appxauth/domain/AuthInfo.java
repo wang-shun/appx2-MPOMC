@@ -34,5 +34,5 @@ public class AuthInfo extends BaseDomain {
 
     private Timestamp createTime = null;
 
-    private Timestamp updateTIme = null;
+    private Timestamp updateTime = null;
 }
