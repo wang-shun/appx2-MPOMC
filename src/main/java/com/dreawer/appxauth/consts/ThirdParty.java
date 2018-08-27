@@ -111,7 +111,7 @@ public class ThirdParty {
         return API_QUERY_AUTH + tokenManager.getComponentAccessToken();
     }
 
-    public String URL_AUTH_PAGE(String id, String userId) throws IOException {
+    public String URL_AUTH_PAGE(String id) throws IOException {
         return HTTP_WXAPP_AUTH_PAGE + "?"
                 + COMPONENT_APPID
                 + "="

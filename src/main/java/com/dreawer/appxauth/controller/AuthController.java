@@ -60,10 +60,9 @@ public class AuthController extends BaseController {
      * @throws IOException
      */
     @RequestMapping("/getAuthPage")
-    public ModelAndView getAuthPage(@RequestParam("id") String id,
-                                    @RequestParam("userId") String userId) throws IOException {
+    public ModelAndView getAuthPage(@RequestParam("id") String id) throws IOException {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE(id, userId));
+        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE(id));
         mv.setViewName("authorize");
         return mv;
     }
