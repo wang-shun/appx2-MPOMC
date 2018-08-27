@@ -85,9 +85,7 @@ public class ServiceManager {
      * * @return
      */
     public ViewGoods goodDetail(String spuId, String userId) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("id", spuId);
-        ResponseCode responseCode = callRequest.restGet(goodDetail, param, userId);
+        ResponseCode responseCode = callRequest.restGet(goodDetail + "?id=" + spuId, userId);
         logger.info("商品详情返回:" + JsonFormatUtil.formatJson(responseCode));
         ViewGoods viewGoods = new Gson().fromJson(responseCode.getData().toString(), ViewGoods.class);
         return viewGoods;

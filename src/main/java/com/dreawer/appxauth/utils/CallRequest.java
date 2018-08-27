@@ -36,10 +36,10 @@ public class CallRequest {
 
     }
 
-    public ResponseCode restGet(String url, Object data, String userId) {
+    public ResponseCode restGet(String url, String userId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("userid", userId);
-        String response = restTemplate.getForObject(url, String.class, data);
+        String response = restTemplate.getForObject(url, String.class);
         return ResponseCode.instanceOf(response);
     }
 
