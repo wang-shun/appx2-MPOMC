@@ -122,7 +122,6 @@ public class ThirdParty {
                 + REDIRECT_URL
                 + "="
                 + APPX_REDIRECT_URL + "?id=" + id + "&"
-                + "userId=" + userId + "&"
                 /** 要授权的帐号类型，
                  * 1则商户扫码后，手机端仅展示公众号、
                  * 2表示仅展示小程序，3表示公众号和小程序都展示。如果为未制定，

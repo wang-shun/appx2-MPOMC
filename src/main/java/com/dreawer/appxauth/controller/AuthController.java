@@ -172,13 +172,15 @@ public class AuthController extends BaseController {
     @ResponseBody
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
                                   @RequestParam("expires_in") String expiresIn,
-                                  @RequestParam("id") String id,
-                                  @RequestParam("userId") String userId) throws Exception {
-
+                                  @RequestParam("id") String id) throws Exception {
+        UserCase userCase = userCaseService.findById(id);
+        if (userCase == null) {
+            return Error.DB("解决方案不存在");
+        }
+        String userId = userCase.getCreaterId();
         AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
         log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
-
         AuthInfo authInfo = authService.findByAppid(appid);
         if (authInfo == null) {
             authInfo = new AuthInfo();
@@ -252,10 +254,6 @@ public class AuthController extends BaseController {
         List<ResultType> list = appManager.checkAuthorCondition(appid);
         String category = appManager.getCategory(appid);
 
-        UserCase userCase = userCaseService.findById(id);
-        if (userCase == null) {
-            return Error.DB("解决方案不存在");
-        }
 
         userCase.setLogo(authorizer_info.getHead_img());
         userCase.setAppCategory(category);
