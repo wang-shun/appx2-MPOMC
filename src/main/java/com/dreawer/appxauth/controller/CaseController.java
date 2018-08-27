@@ -107,7 +107,7 @@ public class CaseController extends BaseController {
      */
     @PostMapping(CREATE)
     public @ResponseBody
-    ResponseCode createUserCase(HttpServletRequest req, @Valid CreateUserCaseForm form, BindingResult result) throws WxAppException, ResponseCodeException {
+    ResponseCode createUserCase(HttpServletRequest req, @RequestBody @Valid CreateUserCaseForm form, BindingResult result) throws WxAppException, ResponseCodeException {
         String userid = req.getHeader("userid");
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
