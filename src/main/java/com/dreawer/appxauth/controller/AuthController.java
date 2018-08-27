@@ -17,6 +17,7 @@ import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +60,10 @@ public class AuthController extends BaseController {
      * @throws IOException
      */
     @RequestMapping("/getAuthPage")
-    public ModelAndView getAuthPage(@RequestParam("id") String id) throws IOException {
+    public ModelAndView getAuthPage(@RequestParam("id") String id,
+                                    @RequestParam("userId") String userId) throws IOException {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE(id));
+        mv.addObject("authUrl", thirdParty.URL_AUTH_PAGE(id, userId));
         mv.setViewName("authorize");
         return mv;
     }
@@ -170,7 +172,8 @@ public class AuthController extends BaseController {
     @ResponseBody
     public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
                                   @RequestParam("expires_in") String expiresIn,
-                                  @RequestParam("id") String id) throws Exception {
+                                  @RequestParam("id") String id,
+                                  @RequestParam("userId") String userId) throws Exception {
 
         AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
         log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
@@ -189,7 +192,7 @@ public class AuthController extends BaseController {
             calendar.add(Calendar.SECOND, Integer.parseInt(expiresIn));
 
             authInfo.setExpireIn(calendar.getTime());
-            authInfo.setCreaterId(null);
+            authInfo.setCreaterId(userId);
             authInfo.setCreateTime(getNow());
             authInfo.setUpdateTime(getNow());
             authService.save(authInfo);
@@ -204,7 +207,7 @@ public class AuthController extends BaseController {
 
             authInfo.setExpireIn(calendar.getTime());
             authInfo.setAppType(AppType.WXAPP);
-            authInfo.setCreaterId(null);
+            authInfo.setCreaterId(userId);
             authInfo.setCreateTime(getNow());
             authInfo.setUpdateTime(getNow());
             authService.update(authInfo);
@@ -214,8 +217,9 @@ public class AuthController extends BaseController {
         //创建应用组织
         Map<String, Object> param = new HashMap<>();
         param.put("appId", appid);
-        if (authorizeInfo.getAuthorizer_info().getNick_name().length() > 2) {
-            param.put("name", authorizeInfo.getAuthorizer_info().getNick_name());
+        Authorizer_info authorizer_info = authorizeInfo.getAuthorizer_info();
+        if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
+            param.put("name", authorizer_info.getPrincipal_name());
         }
         //获取组织ID
         //如果没有组织则创建,有则返回组织ID
@@ -234,7 +238,15 @@ public class AuthController extends BaseController {
         }
 
         //创建店铺
-        //TODO
+        Map<String, Object> addStoreParam = new HashMap<>();
+        if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
+            addStoreParam.put("name", authorizer_info.getPrincipal_name());
+        }
+        addStoreParam.put("appName", authorizer_info.getNick_name());
+        addStoreParam.put("logo", authorizer_info.getHead_img());
+        addStoreParam.put("intro", authorizer_info.getSignature());
+        addStoreParam.put("appid", appid);
+        serviceManager.addStore(addStoreParam, userId);
 
         //更新解决方案
         List<ResultType> list = appManager.checkAuthorCondition(appid);
@@ -245,9 +257,9 @@ public class AuthController extends BaseController {
             return Error.DB("解决方案不存在");
         }
 
-        userCase.setLogo(authorizeInfo.getAuthorizer_info().getHead_img());
+        userCase.setLogo(authorizer_info.getHead_img());
         userCase.setAppCategory(category);
-        userCase.setAppName(authorizeInfo.getAuthorizer_info().getNick_name());
+        userCase.setAppName(authorizer_info.getNick_name());
 
         //无失败原因则授权条件具备
         if (list.size() == 0) {

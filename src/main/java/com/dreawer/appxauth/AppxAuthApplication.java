@@ -3,6 +3,7 @@ package com.dreawer.appxauth;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 //@SpringBootApplication注解等价于以默认属性使用@Configuration，@EnableAutoConfiguration和@ComponentScan：
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableDiscoveryClient
 @MapperScan(basePackages = {"com.dreawer.appxauth.persistence"})
 public class AppxAuthApplication {
 

@@ -111,7 +111,7 @@ public class ThirdParty {
         return API_QUERY_AUTH + tokenManager.getComponentAccessToken();
     }
 
-    public String URL_AUTH_PAGE(String id) throws IOException {
+    public String URL_AUTH_PAGE(String id, String userId) throws IOException {
         return HTTP_WXAPP_AUTH_PAGE + "?"
                 + COMPONENT_APPID
                 + "="
@@ -122,6 +122,7 @@ public class ThirdParty {
                 + REDIRECT_URL
                 + "="
                 + APPX_REDIRECT_URL + "?id=" + id + "&"
+                + "userId=" + userId + "&"
                 /** 要授权的帐号类型，
                  * 1则商户扫码后，手机端仅展示公众号、
                  * 2表示仅展示小程序，3表示公众号和小程序都展示。如果为未制定，
