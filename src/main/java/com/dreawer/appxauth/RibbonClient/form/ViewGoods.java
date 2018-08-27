@@ -3,7 +3,6 @@ package com.dreawer.appxauth.RibbonClient.form;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class ViewGoods {
 
     private String createrId = null; // 创建者ID
 
-    private Timestamp createTime = null; // 创建时间
+    private Long createTime = null; // 创建时间
 
     private String remark = null; // 备注
 

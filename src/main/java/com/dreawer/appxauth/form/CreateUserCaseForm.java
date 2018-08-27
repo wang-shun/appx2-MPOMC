@@ -25,5 +25,7 @@ public class CreateUserCaseForm {
     @NotEmpty(message = "EntryError.EMPTY")
     private String spuId = null; //商品ID
 
+    private String type = null;
+
 
 }

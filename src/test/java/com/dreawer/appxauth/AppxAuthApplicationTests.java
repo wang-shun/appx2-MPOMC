@@ -1,16 +1,18 @@
 package com.dreawer.appxauth;
 
+import com.dreawer.appxauth.consts.ThirdParty;
+import com.dreawer.appxauth.controller.AuthController;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.google.gson.Gson;
 import org.apache.http.entity.StringEntity;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,17 +20,22 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@PropertySource("classpath:returnCode.properties")
 public class AppxAuthApplicationTests {
+
+    @Autowired
+    private Environment env;
 
 
     @Autowired
     private WebApplicationContext context;
     private MockMvc mvc;
+
+    @Autowired
+    private ThirdParty thirdParty;
 
     @Before
     public void setUp() {
@@ -58,17 +65,6 @@ public class AppxAuthApplicationTests {
 
 
 
-    @Test
-    public void test2() throws IOException, JSONException {
-        String testJson = "{\n" +
-                "    \"errcode\": 0,\n" +
-                "    \"errmsg\": \"ok\",\n" +
-                "    \"category_list\": []\n" +
-                "}";
-
-        JSONObject jsonObject = new JSONObject(testJson);
-        System.out.println(jsonObject.getJSONArray("category_list").length() == 0);
-    }
 
     @Test
     public void test3() {
@@ -84,6 +80,9 @@ public class AppxAuthApplicationTests {
         System.out.println(authorizeInfo.toString());
         System.out.println(authorizeInfo.getAuthorization_info().getAuthorizer_access_token());
     }
+
+    @Autowired
+    private AuthController authController;
 
 
 }
