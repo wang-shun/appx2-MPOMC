@@ -108,7 +108,6 @@ public class CaseController extends BaseController {
     @PostMapping(CREATE)
     public @ResponseBody
     ResponseCode createUserCase(HttpServletRequest req, @RequestBody @Valid CreateUserCaseForm form, BindingResult result) throws WxAppException, ResponseCodeException {
-        String userid = req.getHeader("userid");
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
@@ -162,14 +161,14 @@ public class CaseController extends BaseController {
         userCase.setBackendUrl("https://appx.dreawer.com/management");
         userCase.setName(viewGoods.getName());
         userCase.setAppName(null);
-        userCase.setDurationType(period + "月");
+        userCase.setDurationType(period + "个月");
         userCase.setCategoryId(viewGoods.getGroups().get(0).getId());
         userCase.setClientName("");
         userCase.setClientContact("");
         userCase.setExpireDate(invalidTime);
         userCase.setOrderIds(orderId);
         userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
-        userCase.setCreaterId(userid);
+        userCase.setCreaterId(form.getUserId());
         userCase.setDomain("http://api.dreawer.com");
         userCase.setCreateTime(new Timestamp(System.currentTimeMillis()));
         userCaseService.addUserCase(userCase);
