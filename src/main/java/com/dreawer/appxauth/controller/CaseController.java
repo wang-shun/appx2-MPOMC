@@ -112,7 +112,6 @@ public class CaseController extends BaseController {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
-        String number = form.getNumber();
         String orderId = form.getOrderId();
         String skuId = form.getSkuId();
         String userId = form.getUserId();
