@@ -28,10 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <CODE>AuthController</CODE>
@@ -229,6 +226,7 @@ public class AuthController extends BaseController {
         Application application = appService.findByAppid(appid);
         if (application == null) {
             application = new Application();
+            application.setId(UUID.randomUUID().toString().replace("-", ""));
             //获取组织ID
             //如果没有组织则创建,有则返回组织ID
             param.put("appId", application.getId());

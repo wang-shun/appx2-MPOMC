@@ -75,7 +75,7 @@ public class ServiceManager {
     public String addOrganzation(Map<String, Object> param) throws Exception {
         ResponseCode responseCode = callRequest.restPost(addOrganizationUrl, param, null);
         logger.info("获取组织ID返回:" + JsonFormatUtil.formatJson(responseCode));
-        return responseCode.getData().toString();
+        return (String) responseCode.getData();
 
     }
 
