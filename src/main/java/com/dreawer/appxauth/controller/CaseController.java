@@ -111,6 +111,8 @@ public class CaseController extends BaseController {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
+
+
         String orderId = form.getOrderId();
         String skuId = form.getSkuId();
         String userId = form.getUserId();
@@ -137,6 +139,7 @@ public class CaseController extends BaseController {
             return Error.EXT_RESPONSE("未查询到该商品有效期");
         }
 
+
         String period = "0";
         JsonObject returnData = new JsonParser().parse(remark).getAsJsonObject();
         if (returnData.has("period")) {
@@ -146,33 +149,51 @@ public class CaseController extends BaseController {
         Date createDate = getNow();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
+
         //增加使用期限
         //calendar.add(Calendar.MONTH,Integer.parseInt(duration));
         calendar.add(Calendar.MONTH, Integer.parseInt(period));
-        //增加15天
-        calendar.add(Calendar.DATE, 15);
-        Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
 
-        //封装用户小程序信息
-        UserCase userCase = new UserCase();
-        userCase.setSaleMode(SaleMode.DEFAULT);
-        //获取后台url
-        //设置类目名和ID
-        userCase.setBackendUrl("https://appx.dreawer.com/management");
-        userCase.setName(viewGoods.getName());
-        userCase.setAppName(null);
-        userCase.setDurationType(period + "个月");
-        userCase.setCategoryId(viewGoods.getGroups().get(0).getId());
-        userCase.setClientName("");
-        userCase.setClientContact("");
-        userCase.setExpireDate(invalidTime);
-        userCase.setOrderIds(orderId);
-        userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
-        userCase.setCreaterId(form.getUserId());
-        userCase.setDomain("http://api.dreawer.com");
-        userCase.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        userCaseService.addUserCase(userCase);
-        return Success.SUCCESS(userCase);
+        //如果是appx续费订单则增加有效期并写入新订单
+        if (form.getType().equals("APPXRENEW")) {
+            String caseId = form.getCaseId();
+            UserCase userCase = userCaseService.findById(caseId);
+            if (userCase == null) {
+                return Error.DB("未查询到续费解决方案");
+            }
+
+            userCase.setOrderIds(userCase.getOrderIds() + ";" + orderId);
+            userCase.setDurationType(period + "个月");
+            Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
+            userCase.setExpireDate(invalidTime);
+            userCaseService.updateUserCase(userCase);
+            return Success.SUCCESS(userCase);
+
+        } else {
+            //增加15天
+            calendar.add(Calendar.DATE, 15);
+            Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
+            //封装用户小程序信息
+            UserCase userCase = new UserCase();
+            userCase.setSaleMode(SaleMode.DEFAULT);
+            userCase.setDurationType(period + "个月");
+            //获取后台url
+            //设置类目名和ID
+            userCase.setBackendUrl("https://appx.dreawer.com/management");
+            userCase.setName(viewGoods.getName());
+            userCase.setAppName(null);
+            userCase.setCategoryId(viewGoods.getGroups().get(0).getId());
+            userCase.setClientName("");
+            userCase.setClientContact("");
+            userCase.setOrderIds(orderId);
+            userCase.setExpireDate(invalidTime);
+            userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
+            userCase.setCreaterId(form.getUserId());
+            userCase.setDomain("http://api.dreawer.com");
+            userCase.setCreateTime(new Timestamp(System.currentTimeMillis()));
+            userCaseService.addUserCase(userCase);
+            return Success.SUCCESS(userCase);
+        }
     }
 
     /**

@@ -259,7 +259,7 @@ public class AuthController extends BaseController {
         userCase.setLogo(authorizer_info.getHead_img());
         userCase.setAppCategory(category);
         userCase.setAppName(authorizer_info.getNick_name());
-
+        userCase.setAppId(appid);
         //无失败原因则授权条件具备
         if (list.size() == 0) {
             userCaseService.updateUserCase(userCase);
@@ -269,11 +269,11 @@ public class AuthController extends BaseController {
         //如果个人用户购买ECS则通过授权
         if (list.size() == 1) {
             ResultType type = list.get(0);
-            if (type.equals(ResultType.PRINCIPAL) && userCase.getDomain().equals("https://ecs.dreawer.com/")) ;
-            logger.info("ecs授权:" + userCase.getId());
-            userCase.setPublishStatus(PublishStatus.AUTHORIZED);
-            userCaseService.updateUserCase(userCase);
-            return Success.SUCCESS(userCase);
+            if (type.equals(ResultType.PRINCIPAL) && userCase.getDomain().equals("https://ecs.dreawer.com/")) {
+                userCase.setPublishStatus(PublishStatus.AUTHORIZED);
+                userCaseService.updateUserCase(userCase);
+                return Success.SUCCESS(userCase);
+            }
         }
 
         StringBuilder auditResult = new StringBuilder();
