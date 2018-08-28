@@ -107,6 +107,11 @@ public class AppManager {
         if (jsonObject.getJSONArray("category_list").length() == 0) {
             list.add(ResultType.CATEGORY);
         }
+        logger.info("检查权限结果:");
+        list.forEach(x -> {
+            logger.info(x);
+        });
+        logger.info("总数:" + list.size());
         return list;
     }
 
