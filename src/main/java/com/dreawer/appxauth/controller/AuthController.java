@@ -13,6 +13,7 @@ import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.Authorizer_info;
 import com.dreawer.appxauth.model.CategoryList;
+import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
@@ -255,7 +256,6 @@ public class AuthController extends BaseController {
         //更新解决方案
         List<ResultType> list = appManager.checkAuthorCondition(appid);
         String category = appManager.getCategory(appid);
-
         userCase.setLogo(authorizer_info.getHead_img());
         userCase.setAppCategory(category);
         userCase.setAppName(authorizer_info.getNick_name());
@@ -270,8 +270,9 @@ public class AuthController extends BaseController {
         if (list.size() == 1) {
             ResultType type = list.get(0);
             if (type.equals(ResultType.PRINCIPAL) && userCase.getDomain().equals("https://ecs.dreawer.com/")) ;
-            userCaseService.updateUserCase(userCase);
+            logger.info("ecs授权:" + userCase.getId());
             userCase.setPublishStatus(PublishStatus.AUTHORIZED);
+            userCaseService.updateUserCase(userCase);
             return Success.SUCCESS(userCase);
         }
 
@@ -292,9 +293,10 @@ public class AuthController extends BaseController {
                 auditResult.append(";小程序类目未填写");
             }
         }
-        String result = auditResult.substring(1, auditResult.length() - 1);
+        String result = auditResult.substring(1, auditResult.length());
         userCase.setAuditResult(result);
         userCase.setPublishStatus(PublishStatus.MISSINGCONDITION);
+        logger.info("更新后结果" + JsonFormatUtil.formatJson(userCase));
         userCaseService.updateUserCase(userCase);
         return Success.SUCCESS(userCase);
 
