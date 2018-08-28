@@ -219,23 +219,26 @@ public class AuthController extends BaseController {
 
         //创建应用组织
         Map<String, Object> param = new HashMap<>();
-        param.put("appId", appid);
         Authorizer_info authorizer_info = appDetail.getAuthorizer_info();
         if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
             param.put("name", authorizer_info.getPrincipal_name());
         }
-        //获取组织ID
-        //如果没有组织则创建,有则返回组织ID
-        String organizationId = serviceManager.addOrganzation(param);
+
 
         //创建或更新应用
         Application application = appService.findByAppid(appid);
         if (application == null) {
             application = new Application();
+            //获取组织ID
+            //如果没有组织则创建,有则返回组织ID
+            param.put("appId", application.getId());
+            String organizationId = serviceManager.addOrganzation(param);
             application.setOrganizationId(organizationId);
             application.setAppId(appid);
             appService.save(application);
         } else {
+            param.put("appId", application.getId());
+            String organizationId = serviceManager.addOrganzation(param);
             application.setOrganizationId(organizationId);
             appService.update(application);
         }
@@ -254,7 +257,6 @@ public class AuthController extends BaseController {
         //更新解决方案
         List<ResultType> list = appManager.checkAuthorCondition(appid);
         String category = appManager.getCategory(appid);
-
 
         userCase.setLogo(authorizer_info.getHead_img());
         userCase.setAppCategory(category);
