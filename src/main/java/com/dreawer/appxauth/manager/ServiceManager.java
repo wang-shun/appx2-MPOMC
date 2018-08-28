@@ -6,6 +6,7 @@ import com.dreawer.appxauth.utils.CallRequest;
 import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
+import com.google.gson.JsonPrimitive;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -75,7 +76,8 @@ public class ServiceManager {
     public String addOrganzation(Map<String, Object> param) throws Exception {
         ResponseCode responseCode = callRequest.restPost(addOrganizationUrl, param, null);
         logger.info("获取组织ID返回:" + JsonFormatUtil.formatJson(responseCode));
-        return (String) responseCode.getData();
+        JsonPrimitive data = (JsonPrimitive) responseCode.getData();
+        return data.getAsString();
 
     }
 
