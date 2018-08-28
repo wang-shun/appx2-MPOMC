@@ -74,16 +74,15 @@ public class AppManager {
     public List<ResultType> checkAuthorCondition(String appid) throws IOException {
         List<ResultType> list = new ArrayList<>();
         //首先判断主体信息
-        String authorizerInfo = getAuthorizerInfo(appid);
-        AuthorizeInfo authorizeInfo = new Gson().fromJson(authorizerInfo, AuthorizeInfo.class);
-        if (authorizeInfo.getAuthorizer_info().getPrincipal_name().equals(thirdParty.PERSIONAL)) {
+        AuthorizeInfo authorizerInfo = getAuthorizerInfo(appid);
+        if (authorizerInfo.getAuthorizer_info().getPrincipal_name().equals(thirdParty.PERSIONAL)) {
             list.add(ResultType.PRINCIPAL);
         }
         //然后判断权限
         Boolean fun17 = false;
         Boolean fun18 = false;
         Boolean fun25 = false;
-        List<func_info> func_info = authorizeInfo.getAuthorization_info().getFunc_info();
+        List<func_info> func_info = authorizerInfo.getAuthorization_info().getFunc_info();
         for (func_info funcInfo : func_info) {
             if (funcInfo.getFuncscope_category().getId() == 17) {
                 fun17 = true;
@@ -99,7 +98,7 @@ public class AppManager {
             list.add(ResultType.PERMISSIONDENIED);
         }
         //再判断名称是否填写
-        if (StringUtils.isBlank(authorizeInfo.getAuthorizer_info().getNick_name())) {
+        if (StringUtils.isBlank(authorizerInfo.getAuthorizer_info().getNick_name())) {
             list.add(ResultType.NAME);
         }
         //最后判断类目是否填写
@@ -298,12 +297,12 @@ public class AppManager {
      * @return
      * @throws IOException
      */
-    public String getAuthorizerInfo(String appid) throws IOException {
+    public AuthorizeInfo getAuthorizerInfo(String appid) throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put(thirdParty.COMPONENT_APPID, thirdParty.APPX_THIRDPARTY_APPID);
         params.put(thirdParty.AUTHORIZER_APPID, appid);
         String response = okhttp.postSyncJson(thirdParty.URL_GET_AUTHORIZER_INFO(), params);
-        return response;
+        return new Gson().fromJson(response, AuthorizeInfo.class);
     }
 
     /**

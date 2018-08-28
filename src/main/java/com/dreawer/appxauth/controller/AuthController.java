@@ -214,11 +214,13 @@ public class AuthController extends BaseController {
             authService.update(authInfo);
         }
 
+        //获取授权详情
+        AuthorizeInfo appDetail = appManager.getAuthorizerInfo(appid);
 
         //创建应用组织
         Map<String, Object> param = new HashMap<>();
         param.put("appId", appid);
-        Authorizer_info authorizer_info = authorizeInfo.getAuthorizer_info();
+        Authorizer_info authorizer_info = appDetail.getAuthorizer_info();
         if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
             param.put("name", authorizer_info.getPrincipal_name());
         }
@@ -313,9 +315,8 @@ public class AuthController extends BaseController {
             return Error.DB("未找到该应用");
         }
         String appId = application.getAppId();
-        String authorizerInfo = appManager.getAuthorizerInfo(appId);
-        AuthorizeInfo authorizeInfo = new Gson().fromJson(authorizerInfo, AuthorizeInfo.class);
-        Authorizer_info authorizer_info = authorizeInfo.getAuthorizer_info();
+        AuthorizeInfo authorizerInfo = appManager.getAuthorizerInfo(appId);
+        Authorizer_info authorizer_info = authorizerInfo.getAuthorizer_info();
         Map<String, Object> params = new HashMap<>();
         params.put("nickName", authorizer_info.getNick_name());
         params.put("logo", authorizer_info.getHead_img());
