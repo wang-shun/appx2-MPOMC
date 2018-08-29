@@ -10,6 +10,7 @@ import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.Authorizer_info;
 import com.dreawer.appxauth.model.CategoryList;
+import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
@@ -96,8 +97,9 @@ public class AuthController extends BaseController {
         String code = form.getCode();
         String iv = form.getIv();
         String oid = form.getOid();
-
+        log.info("请求登录:" + "appid:" + appid + "\r\n" + "code:" + code + "\r\n" + "oid" + oid);
         ApplicationUser applicationUser = appUserService.findByAppidAndOrganizationId(appid, oid);
+        log.info("查询结果:" + JsonFormatUtil.formatJson(applicationUser));
         String response = appManager.wxLogin(appid, code);
         JSONObject jsonObject = new JSONObject(response);
         String openId = (String) jsonObject.get("openid");

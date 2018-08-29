@@ -76,7 +76,7 @@ CREATE TABLE `appx_user_case` (
   COMMENT '客户名称',
   `cli_cnt`     char(50)               DEFAULT NULL
   COMMENT '联系方式',
-  `dele_ph`     varchar(50)            DEFAULT NULL,
+  `spuId`       varchar(50)            DEFAULT NULL,
   `pub_sts`     char(32)      NOT NULL DEFAULT 'UNPAID'
   COMMENT '发布状态(PUBLISHED-已发布,UNPUBLISHED-未发布,DELEGATEDPUBLISHING-委托发布中,PENDING-审核中,UNPAID-未支付)',
   `dur_type`    varchar(50)   NOT NULL
