@@ -52,7 +52,7 @@ public class UserCase extends BaseDomain {
 
     private String clientContact = null; //客户联系方式
 
-    private String delegatePhone = null; //委托发布手机号
+    private String spuId = null; //spuId
 
     private PublishStatus publishStatus = null; //发布状态
 

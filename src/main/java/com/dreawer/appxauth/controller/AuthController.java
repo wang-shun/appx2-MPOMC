@@ -13,6 +13,7 @@ import com.dreawer.appxauth.model.CategoryList;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonPrimitive;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -202,7 +203,9 @@ public class AuthController extends BaseController {
         appService.updateApplication(appid, principal_name);
 
         //创建店铺
-        serviceManager.addStore(appid, nick_name, principal_name, head_img, signature, userId);
+        ResponseCode responseCode = serviceManager.addStore(appid, nick_name, principal_name, head_img, signature, userId);
+        JsonPrimitive data = (JsonPrimitive) responseCode.getData();
+        String storeId = data.getAsJsonObject().get("id").getAsString();
 
         //授权流程判断,判断用户小程序是否具备部署条件
         List<ResultType> list = appManager.checkAuthorCondition(appid);
@@ -215,7 +218,7 @@ public class AuthController extends BaseController {
         userCase.setAppCategory(category);
         userCase.setAppName(nick_name);
         userCase.setAppId(appid);
-
+        userCase.setStoreId(storeId);
         //更新用户授权结果和昵称头像,APPID
         userCase = userCaseService.updateAuditResult(userCase, list);
         return Success.SUCCESS(userCase);

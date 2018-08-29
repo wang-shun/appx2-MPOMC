@@ -180,6 +180,7 @@ public class CaseController extends BaseController {
             userCase.setDurationType(period + "个月");
             //获取后台url
             //设置类目名和ID
+            userCase.setSpuId(viewGoods.getId());
             userCase.setBackendUrl("https://appx.dreawer.com/management");
             userCase.setName(viewGoods.getName());
             userCase.setAppName(null);

@@ -112,8 +112,8 @@
             sal_mode=#{saleMode},
         </if>
 
-        <if test="delegatePhone!=null">
-            dele_ph=#{delegatePhone},
+        <if test="spuId!=null">
+            spuId=#{spuId},
         </if>
         <if test="publishStatus!=null">
             pub_sts=#{publishStatus},
@@ -147,14 +147,14 @@
     <!-- SQL添加																	-->
     <!-- ================================================================================== -->
     <insert id="addUserCase" parameterType="UserCase">
-        INSERT INTO appx_user_case(id,name,sal_mode,cli_nam,cli_cnt,dele_ph,app_nam,
+        INSERT INTO appx_user_case(id,name,sal_mode,cli_nam,cli_cnt,spuId,app_nam,
         <!-- 订单列表,用;分割 -->
         orders,
         bac_url,pub_sts,app_id,cat_id,exp_date,domain,dur_type,crer_id,cre_tim)
         VALUES
         (#{id},#{name},#{saleMode}
         ,#{clientName},#{clientContact}
-        ,#{delegatePhone},#{appName},#{orderIds},
+        ,#{spuId},#{appName},#{orderIds},
 
         #{backendUrl},#{publishStatus},#{appId},#{categoryId},#{expireDate},
         #{domain},#{durationType},#{createrId},#{createTime})
@@ -300,7 +300,7 @@
 
     <!-- 基本信息 -->
     <sql id="basicFields">
-        id, name, logo, sto_id, bac_url, app_nam, cat_id, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, dele_ph, pre_qr, rel_qr, app_id, category, app_cate, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
+        id, name, logo, sto_id, bac_url, app_nam, cat_id, orders, sal_mode, cli_nam, cli_cnt, aud_res, domain, spuId, pre_qr, rel_qr, app_id, category, app_cate, pub_sts, dur_type, exp_date, crer_id, cre_tim, updr_id, upd_tim
     </sql>
 
     <!-- ================================================================================== -->
@@ -320,7 +320,7 @@
         <result property="category" column="category"/>
         <result property="appCategory" column="app_cate"/>
         <result property="saleMode" column="sal_mode"/>
-        <result property="delegatePhone" column="dele_ph"/>
+        <result property="spuId" column="spuId"/>
         <result property="publishStatus" column="pub_sts"/>
         <result property="durationType" column="dur_type"/>
         <result property="expireDate" column="exp_date"/>

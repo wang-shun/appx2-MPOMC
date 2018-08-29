@@ -225,7 +225,9 @@ public class AppManager {
      * @param appid
      * @return 提交审核号
      */
-    public String submitAudit(String appid, String tags) throws JSONException, IOException {
+    public String submitAudit(String appid) throws JSONException, IOException {
+
+
         String pageInfo = getPage(appid);
         JSONObject page = new JSONObject(pageInfo);
         JSONArray page_list = page.getJSONArray("page_list");
@@ -242,7 +244,7 @@ public class AppManager {
         Integer secondId = (Integer) category_list.getJSONObject(0).get("second_id");
         //目前这里为了通过审核先固定写成首页,日后再根据情况填写具体页面
         items.put("address", indexPage);
-        items.put("tag", tags);
+        items.put("tag", "APPX");
         items.put("first_class", firstClass);
         items.put("second_class", secondClass);
         items.put("first_id", firstId);
