@@ -13,6 +13,7 @@ import com.dreawer.appxauth.form.UserCaseCountForm;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.QueryType;
 import com.dreawer.appxauth.lang.SaleMode;
+import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.ResponseCodeRepository;
@@ -154,26 +155,37 @@ public class CaseController extends BaseController {
         //增加使用期限
         //calendar.add(Calendar.MONTH,Integer.parseInt(duration));
         calendar.add(Calendar.MONTH, Integer.parseInt(period));
-
+        long current = calendar.getTimeInMillis();
         //如果是appx续费订单则增加有效期并写入新订单
+
         if (form.getType().equals("APPXRENEW")) {
             String caseId = form.getCaseId();
             UserCase userCase = userCaseService.findById(caseId);
             if (userCase == null) {
                 return Error.DB("未查询到续费解决方案");
             }
-
+            //已发布则增加有效期
+            if (userCase.getPublishStatus().equals(PublishStatus.PUBLISHED)) {
+                Calendar renew = Calendar.getInstance();
+                renew.setTime(userCase.getExpireDate());
+                renew.add(Calendar.MONTH, Integer.parseInt(period));
+                userCase.setExpireDate(new Timestamp(renew.getTimeInMillis()));
+                //过期则从当前时间增加有效期
+            } else if (userCase.getPublishStatus().equals(PublishStatus.EXPIRED)) {
+                userCase.setExpireDate(new Timestamp(current));
+            } else {
+                logger.info("续费失败:" + JsonFormatUtil.formatJson(userCase));
+                return Error.PERMISSION("无法续费");
+            }
             userCase.setOrderIds(userCase.getOrderIds() + ";" + orderId);
             userCase.setDurationType(period + "个月");
-            Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
-            userCase.setExpireDate(invalidTime);
             userCaseService.updateUserCase(userCase);
             return Success.SUCCESS(userCase);
 
         } else {
             //增加15天
             calendar.add(Calendar.DATE, 15);
-            Timestamp invalidTime = new Timestamp(calendar.getTimeInMillis());
+            Timestamp invalidTime = new Timestamp(current);
             //封装用户小程序信息
             UserCase userCase = new UserCase();
             userCase.setSaleMode(SaleMode.DEFAULT);
