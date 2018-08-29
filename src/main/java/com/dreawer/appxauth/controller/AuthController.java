@@ -3,22 +3,17 @@ package com.dreawer.appxauth.controller;
 import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.Application;
 import com.dreawer.appxauth.domain.ApplicationUser;
-import com.dreawer.appxauth.domain.AuthInfo;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.form.WxLoginForm;
-import com.dreawer.appxauth.lang.AppType;
-import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.Authorizer_info;
 import com.dreawer.appxauth.model.CategoryList;
-import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +24,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.dreawer.appxauth.utils.BaseUtils.getNow;
 
 /**
  * <CODE>AuthController</CODE>
@@ -177,130 +176,52 @@ public class AuthController extends BaseController {
         String userId = userCase.getCreaterId();
         AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
         log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
+        //小程序appid
         String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
-        AuthInfo authInfo = authService.findByAppid(appid);
-        if (authInfo == null) {
-            authInfo = new AuthInfo();
-            authInfo.setAuthorizationCode(authorizationCode);
-            authInfo.setAccessToken(authorizeInfo.getAuthorization_info().getAuthorizer_access_token());
-            authInfo.setRefreshToken(authorizeInfo.getAuthorization_info().getAuthorizer_refresh_token());
-            authInfo.setAppid(appid);
-            authInfo.setAppType(AppType.WXAPP);
-            //获取有效期
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, Integer.parseInt(expiresIn));
 
-            authInfo.setExpireIn(calendar.getTime());
-            authInfo.setCreaterId(userId);
-            authInfo.setCreateTime(getNow());
-            authInfo.setUpdateTime(getNow());
-            authService.save(authInfo);
-
-        } else {
-            authInfo.setAccessToken(authorizeInfo.getAuthorization_info().getAuthorizer_access_token());
-            authInfo.setRefreshToken(authorizeInfo.getAuthorization_info().getAuthorizer_refresh_token());
-            authInfo.setAuthorizationCode(authorizationCode);
-            //获取有效期
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, Integer.parseInt(expiresIn));
-
-            authInfo.setExpireIn(calendar.getTime());
-            authInfo.setAppType(AppType.WXAPP);
-            authInfo.setCreaterId(userId);
-            authInfo.setCreateTime(getNow());
-            authInfo.setUpdateTime(getNow());
-            authService.update(authInfo);
-        }
+        //更新授权信息(令牌和刷新令牌)
+        authService.updateAuthInfo(authorizationCode, expiresIn, userId, authorizeInfo, appid);
 
         //获取授权详情
         AuthorizeInfo appDetail = appManager.getAuthorizerInfo(appid);
 
-        //创建应用组织
-        Map<String, Object> param = new HashMap<>();
         Authorizer_info authorizer_info = appDetail.getAuthorizer_info();
-        if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
-            param.put("name", authorizer_info.getPrincipal_name());
-        }
+
+        //授权基本信息
+        //小程序昵称
+        String nick_name = authorizer_info.getNick_name();
+        //公司名称
+        String principal_name = authorizer_info.getPrincipal_name();
+        //小程序logo
+        String head_img = authorizer_info.getHead_img();
+        //小程序简介
+        String signature = authorizer_info.getSignature();
 
 
-        //创建或更新应用
-        Application application = appService.findByAppid(appid);
-        if (application == null) {
-            application = new Application();
-            application.setId(UUID.randomUUID().toString().replace("-", ""));
-            //获取组织ID
-            //如果没有组织则创建,有则返回组织ID
-            param.put("appId", application.getId());
-            String organizationId = serviceManager.addOrganzation(param);
-            application.setOrganizationId(organizationId);
-            application.setAppId(appid);
-            appService.save(application);
-        } else {
-            param.put("appId", application.getId());
-            String organizationId = serviceManager.addOrganzation(param);
-            application.setOrganizationId(organizationId);
-            appService.update(application);
-        }
+        //更新应用并创建应用组织
+        appService.updateApplication(appid, principal_name);
 
         //创建店铺
-        Map<String, Object> addStoreParam = new HashMap<>();
-        if (!StringUtils.isBlank(authorizer_info.getPrincipal_name())) {
-            addStoreParam.put("name", authorizer_info.getPrincipal_name());
-        }
-        addStoreParam.put("appName", authorizer_info.getNick_name());
-        addStoreParam.put("logo", authorizer_info.getHead_img());
-        addStoreParam.put("intro", authorizer_info.getSignature());
-        addStoreParam.put("appid", appid);
-        serviceManager.addStore(addStoreParam, userId);
+        serviceManager.addStore(appid, nick_name, principal_name, head_img, signature, userId);
 
-        //更新解决方案
+        //授权流程判断,判断用户小程序是否具备部署条件
         List<ResultType> list = appManager.checkAuthorCondition(appid);
-        String category = appManager.getCategory(appid);
-        userCase.setLogo(authorizer_info.getHead_img());
-        userCase.setAppCategory(category);
-        userCase.setAppName(authorizer_info.getNick_name());
-        userCase.setAppId(appid);
-        //无失败原因则授权条件具备
-        if (list.size() == 0) {
-            userCaseService.updateUserCase(userCase);
-            userCase.setPublishStatus(PublishStatus.AUTHORIZED);
-            return Success.SUCCESS(userCase);
-        }
-        //如果个人用户购买ECS则通过授权
-        if (list.size() == 1) {
-            ResultType type = list.get(0);
-            if (type.equals(ResultType.PRINCIPAL) && userCase.getDomain().equals("https://ecs.dreawer.com/")) {
-                userCase.setPublishStatus(PublishStatus.AUTHORIZED);
-                userCaseService.updateUserCase(userCase);
-                return Success.SUCCESS(userCase);
-            }
-        }
 
-        StringBuilder auditResult = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            ResultType type = list.get(i);
-            if (type.equals(ResultType.PERMISSIONDENIED)) {
-                auditResult.append(";用户未提供开发权限");
-            }
-            //如果非ECS小程序为个人主体
-            if (type.equals(ResultType.PRINCIPAL) && !userCase.getDomain().equals("https://ecs.dreawer.com/")) {
-                auditResult.append(";小程序主体需为企业");
-            }
-            if (type.equals(ResultType.NAME)) {
-                auditResult.append(";小程序名称未填写");
-            }
-            if (type.equals(ResultType.CATEGORY)) {
-                auditResult.append(";小程序类目未填写");
-            }
-        }
-        String result = auditResult.substring(1, auditResult.length());
-        userCase.setAuditResult(result);
-        userCase.setPublishStatus(PublishStatus.MISSINGCONDITION);
-        logger.info("更新后结果" + JsonFormatUtil.formatJson(userCase));
-        userCaseService.updateUserCase(userCase);
+        //获取小程序类目
+        String category = appManager.getCategory(appid);
+
+
+        userCase.setLogo(head_img);
+        userCase.setAppCategory(category);
+        userCase.setAppName(nick_name);
+        userCase.setAppId(appid);
+
+        //更新用户授权结果和昵称头像,APPID
+        userCase = userCaseService.updateAuditResult(userCase, list);
         return Success.SUCCESS(userCase);
 
     }
+
 
     /**
      * 获取微信头像昵称

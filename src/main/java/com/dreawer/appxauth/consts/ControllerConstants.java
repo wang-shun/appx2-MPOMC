@@ -106,6 +106,11 @@ public final class ControllerConstants {
      */
     public static final String QUERY_EXPIRE = "/queryExpire";
 
+    /**
+     * 请求 "解绑"
+     */
+    public static final String UNBIND = "/unbind";
+
 
     /**
      * 请求 "通过ID查询"

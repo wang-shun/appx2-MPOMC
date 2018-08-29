@@ -36,6 +36,7 @@ import java.util.*;
 
 import static com.dreawer.appxauth.consts.ControllerConstants.*;
 import static com.dreawer.appxauth.consts.MessageConstants.ERR_OTHER;
+import static com.dreawer.appxauth.utils.BaseUtils.getNow;
 
 /**
  * <CODE>CaseController</CODE>
@@ -364,6 +365,26 @@ public class CaseController extends BaseController {
             // 返回失败标志及信息
             return Error.APPSERVER;
         }
+    }
+
+    /**
+     * 小程序解绑
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "解绑小程序")
+    @GetMapping(value = UNBIND)
+    @ResponseBody
+    public ResponseCode unbind(@RequestParam("id") String id) {
+        UserCase userCase = userCaseService.findById(id);
+        if (userCase == null) {
+            return Error.DB("未查询到解决方案");
+        }
+        userCase.setAppId("");
+        userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
+        userCaseService.updateUserCase(userCase);
+        return Success.SUCCESS(userCase);
     }
 }
 

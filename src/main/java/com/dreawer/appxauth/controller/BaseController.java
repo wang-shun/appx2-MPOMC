@@ -18,7 +18,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.AlgorithmParameters;
 import java.security.Security;
-import java.sql.Timestamp;
 
 /**
  * <code>BaseController</code> 它是本系统中所有控制器的基类，提供控制器通用方法的实现。
@@ -57,18 +56,6 @@ public class BaseController {
 
 
     protected Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
-
-
-    /**
-     * 获取当前系统时间。
-     *
-     * @return 当前系统时间。
-     * @author David Dai
-     * @since 2.0
-     */
-    protected Timestamp getNow() {
-        return new Timestamp(System.currentTimeMillis());
-    }
 
 
     /**

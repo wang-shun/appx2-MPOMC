@@ -3,7 +3,9 @@ package com.dreawer.appxauth.service;
 import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.PublishStatus;
+import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.persistence.UserCaseDao;
+import com.dreawer.appxauth.utils.JsonFormatUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -173,5 +175,54 @@ public class UserCaseService {
      */
     public UserCase findById(String id) {
         return userCaseDao.findById(id);
+    }
+
+    /**
+     * 更新用户解决方案并检查授权条件
+     *
+     * @param userCase
+     * @param list
+     * @return
+     */
+    public UserCase updateAuditResult(UserCase userCase, List<ResultType> list) {
+        //无失败原因则授权条件具备
+        if (list.size() == 0) {
+            userCaseDao.updateUserCase(userCase);
+            userCase.setPublishStatus(PublishStatus.AUTHORIZED);
+            return userCase;
+        }
+        //如果个人用户购买ECS则通过授权
+        if (list.size() == 1) {
+            ResultType type = list.get(0);
+            if (type.equals(ResultType.PRINCIPAL) && userCase.getDomain().equals("https://ecs.dreawer.com/")) {
+                userCase.setPublishStatus(PublishStatus.AUTHORIZED);
+                userCaseDao.updateUserCase(userCase);
+                return userCase;
+            }
+        }
+
+        StringBuilder auditResult = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            ResultType type = list.get(i);
+            if (type.equals(ResultType.PERMISSIONDENIED)) {
+                auditResult.append(";用户未提供开发权限");
+            }
+            //如果非ECS小程序为个人主体
+            if (type.equals(ResultType.PRINCIPAL) && !userCase.getDomain().equals("https://ecs.dreawer.com/")) {
+                auditResult.append(";小程序主体需为企业");
+            }
+            if (type.equals(ResultType.NAME)) {
+                auditResult.append(";小程序名称未填写");
+            }
+            if (type.equals(ResultType.CATEGORY)) {
+                auditResult.append(";小程序类目未填写");
+            }
+        }
+        String result = auditResult.substring(1, auditResult.length());
+        userCase.setAuditResult(result);
+        userCase.setPublishStatus(PublishStatus.MISSINGCONDITION);
+        logger.info("更新后结果" + JsonFormatUtil.formatJson(userCase));
+        userCaseDao.updateUserCase(userCase);
+        return userCase;
     }
 }

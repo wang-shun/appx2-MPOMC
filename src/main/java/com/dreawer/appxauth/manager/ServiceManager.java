@@ -7,6 +7,7 @@ import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonPrimitive;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -95,14 +96,19 @@ public class ServiceManager {
 
     /**
      * 调用店铺中心生成店铺
-     *
-     * @param param
-     * @param userId
      * @return
      * @throws Exception
      */
-    public ResponseCode addStore(Map param, String userId) throws Exception {
-        ResponseCode responseCode = callRequest.restPost(addEnterprise, param, userId);
+    public ResponseCode addStore(String appid, String nick_name, String principal_name, String head_img, String signature, String userId) throws Exception {
+        Map<String, Object> addStoreParam = new HashMap<>();
+        if (!StringUtils.isBlank(principal_name)) {
+            addStoreParam.put("name", principal_name);
+        }
+        addStoreParam.put("appName", nick_name);
+        addStoreParam.put("logo", head_img);
+        addStoreParam.put("intro", signature);
+        addStoreParam.put("appid", appid);
+        ResponseCode responseCode = callRequest.restPost(addEnterprise, addStoreParam, userId);
         logger.info("生成店铺返回:" + JsonFormatUtil.formatJson(responseCode));
         return responseCode;
     }
