@@ -7,13 +7,13 @@
     <!-- SQL查询																				-->
     <!-- ================================================================================== -->
 
-    <select id="findByAppidAndApplicationId" parameterType="Map" resultMap="ApplicationUserResultMap">
+    <select id="findByOpenIdAndApplicationId" parameterType="Map" resultMap="ApplicationUserResultMap">
         SELECT
         <include refid="basicFields"/>
         FROM
         app_user
         WHERE
-        appid = #{appid}
+        open_id = #{openId}
         AND
         oid = #{applicationId}
     </select>

@@ -97,13 +97,13 @@ public class AuthController extends BaseController {
         String code = form.getCode();
         String iv = form.getIv();
         String oid = form.getOid();
-        log.info("请求登录:" + "appid:" + appid + "\r\n" + "code:" + code + "\r\n" + "oid" + oid);
-        ApplicationUser applicationUser = appUserService.findByAppidAndOrganizationId(appid, oid);
-        log.info("查询结果:" + JsonFormatUtil.formatJson(applicationUser));
         String response = appManager.wxLogin(appid, code);
         JSONObject jsonObject = new JSONObject(response);
         String openId = (String) jsonObject.get("openid");
         String sessionKey = (String) jsonObject.get("session_key");
+        log.info("请求登录:" + "appid:" + appid + "\r\n" + "code:" + code + "\r\n" + "oid" + oid);
+        ApplicationUser applicationUser = appUserService.findByOpenIdAndApplicationId(openId, oid);
+        log.info("查询结果:" + JsonFormatUtil.formatJson(applicationUser));
         Map<String, Object> responseParam = new HashMap<>();
         //如果该小程序用户在该企业未注册
         if (applicationUser == null) {

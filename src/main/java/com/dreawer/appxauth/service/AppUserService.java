@@ -19,8 +19,8 @@ public class AppUserService {
     private AppUserDao appUserDao;
 
 
-    public ApplicationUser findByAppidAndOrganizationId(String appid, String applicationId) {
-        return appUserDao.findByAppidAndApplicationId(appid, applicationId);
+    public ApplicationUser findByOpenIdAndApplicationId(String openId, String applicationId) {
+        return appUserDao.findByOpenIdAndApplicationId(openId, applicationId);
     }
 
     public void save(ApplicationUser application) {

@@ -16,11 +16,11 @@ import java.util.Map;
 
 @Repository
 public class AppUserDao extends MyBatisBaseDao<ApplicationUser> {
-    public ApplicationUser findByAppidAndApplicationId(String appid, String applicationId) {
+    public ApplicationUser findByOpenIdAndApplicationId(String openId, String applicationId) {
         Map<String, String> param = new HashMap<>();
-        param.put("appid", appid);
+        param.put("openId", openId);
         param.put("applicationId", applicationId);
-        return selectOne("findByAppidAndApplicationId", param);
+        return selectOne("findByOpenIdAndApplicationId", param);
     }
 
     public void save(ApplicationUser applicationUser) {
