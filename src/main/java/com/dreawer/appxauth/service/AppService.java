@@ -44,7 +44,7 @@ public class AppService {
         return appDao.findByAppId(appid);
     }
 
-    public void updateApplication(String appid, String principal_name) throws Exception {
+    public Application updateApplication(String appid, String principal_name) throws Exception {
         Map<String, Object> param = new HashMap<>();
         if (!StringUtils.isBlank(principal_name)) {
             param.put("name", principal_name);
@@ -67,6 +67,7 @@ public class AppService {
             application.setOrganizationId(organizationId);
             appDao.update(application);
         }
+        return application;
     }
 
 }

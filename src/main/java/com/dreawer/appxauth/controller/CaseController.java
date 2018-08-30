@@ -164,18 +164,22 @@ public class CaseController extends BaseController {
             if (userCase == null) {
                 return Error.DB("未查询到续费解决方案");
             }
-            //已发布则增加有效期
-            if (userCase.getPublishStatus().equals(PublishStatus.PUBLISHED)) {
+            PublishStatus publishStatus = userCase.getPublishStatus();
+
+            //除了未支付其他都可以续费
+            if (publishStatus.equals(PublishStatus.UNPAID)) {
+                logger.info("续费失败:" + JsonFormatUtil.formatJson(userCase));
+                return Error.PERMISSION("无法续费");
+
+            } else if (publishStatus.equals(PublishStatus.EXPIRED)) {
+                //过期则从当前时间增加有效期
+                userCase.setExpireDate(new Timestamp(current));
+            } else {
+                //已发布则增加有效期
                 Calendar renew = Calendar.getInstance();
                 renew.setTime(userCase.getExpireDate());
                 renew.add(Calendar.MONTH, Integer.parseInt(period));
                 userCase.setExpireDate(new Timestamp(renew.getTimeInMillis()));
-                //过期则从当前时间增加有效期
-            } else if (userCase.getPublishStatus().equals(PublishStatus.EXPIRED)) {
-                userCase.setExpireDate(new Timestamp(current));
-            } else {
-                logger.info("续费失败:" + JsonFormatUtil.formatJson(userCase));
-                return Error.PERMISSION("无法续费");
             }
             userCase.setOrderIds(userCase.getOrderIds() + ";" + orderId);
             userCase.setDurationType(period + "个月");

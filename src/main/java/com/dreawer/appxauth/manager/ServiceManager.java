@@ -39,6 +39,8 @@ public class ServiceManager {
 
     private String addEnterprise = "http://sc/enterprise/add";
 
+    private String initAccount = "http://bsmc/init";
+
     /**
      * 注册小程序用户到用户中心
      *
@@ -92,6 +94,21 @@ public class ServiceManager {
         logger.info("商品详情返回:" + JsonFormatUtil.formatJson(responseCode));
         ViewGoods viewGoods = new Gson().fromJson(responseCode.getData().toString(), ViewGoods.class);
         return viewGoods;
+    }
+
+
+    /**
+     * 创建管理员帐号返回
+     * * @return
+     */
+    public ResponseCode initAccount(String applicationId, String type, String phoneNumber) throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        param.put("appId", applicationId);
+        param.put("type", type);
+        param.put("phoneNumber", phoneNumber);
+        ResponseCode responseCode = callRequest.restPost(goodDetail, param, null);
+        logger.info("创建管理员帐号返回:" + JsonFormatUtil.formatJson(responseCode));
+        return responseCode;
     }
 
     /**
