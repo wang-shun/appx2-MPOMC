@@ -2,6 +2,7 @@ package com.dreawer.appxauth.controller;
 
 import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
 import com.dreawer.appxauth.domain.UserCase;
+import com.dreawer.appxauth.lang.CommitType;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
@@ -9,7 +10,11 @@ import com.dreawer.responsecode.rcdt.Success;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -21,7 +26,7 @@ import java.io.IOException;
  * @Date 18-7-11
  */
 
-@RestController
+@Controller
 @RequestMapping("/deploy")
 @Slf4j
 public class DeployController extends BaseController {
@@ -35,11 +40,8 @@ public class DeployController extends BaseController {
     protected ResponseCode commitCode(
             @RequestParam("templateId") String templateId,
             @RequestParam("appid") String appid,
-            @RequestParam("storeId") String storeId,
-            //@RequestParam(value = "appKey", required = false) String appKey,
-            @RequestParam("domain") String domain) throws JSONException, IOException {
-
-        String response = appManager.commit(appid, templateId, storeId, domain);
+            @RequestParam("storeId") String storeId) throws IOException {
+        String response = appManager.commit(appid, templateId, storeId);
         //判断返回结果
         return Success.SUCCESS(response);
     }
@@ -69,9 +71,8 @@ public class DeployController extends BaseController {
             String templetId = viewGoods.getViewApp().getTempletId();
             String appId = userCase.getAppId();
             String storeId = userCase.getStoreId();
-            String domain = userCase.getDomain();
             //提交代码
-            commitCode(templetId, appId, storeId, domain);
+            commitCode(templetId, appId, storeId);
             String auditId = appManager.submitAudit(id);
             return Success.SUCCESS(auditId);
         } else {
@@ -104,11 +105,40 @@ public class DeployController extends BaseController {
      * @throws IOException
      */
     @GetMapping("/release")
+    @ResponseBody
     public ResponseCode release(@RequestParam("appid") String appid) throws IOException {
         String auditStatus = appManager.release(appid);
         JSONObject jsonObject = new JSONObject(auditStatus);
         return Success.SUCCESS(jsonObject);
     }
+
+
+    @GetMapping("/shortcut")
+    @ResponseBody
+    public String shortcut(@RequestParam("appId") String appid,
+                           @RequestParam("tempId") String templateId,
+                           @RequestParam("storeId") String storeId,
+                           @RequestParam("type") CommitType commitType) throws IOException {
+        String response;
+        switch (commitType) {
+            case PREVIEW:
+                response = appManager.commit(appid, templateId, storeId);
+                log.info("小程序上传结果:" + response);
+                return appManager.getPreviewQR(appid);
+            case SUBMIT:
+                response = appManager.submitAudit(appid);
+                log.info("小程序提交审核结果:" + response);
+                return response;
+            case BOTH:
+                response = appManager.commit(appid, templateId, storeId);
+                log.info("小程序上传结果:" + response);
+                response = appManager.submitAudit(appid);
+                log.info("小程序提交审核结果:" + response);
+                return appManager.getPreviewQR(appid);
+        }
+        return null;
+    }
+
 }
 
 

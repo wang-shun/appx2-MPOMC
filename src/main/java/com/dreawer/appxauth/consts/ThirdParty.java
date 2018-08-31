@@ -46,6 +46,14 @@ public class ThirdParty {
     public String PROGRAM_ENCODING_AES_KEY = null;
     @Value("${thirdParty.APPX_REDIRECT_URL}")
     public String APPX_REDIRECT_URL = null;
+    @Value("${thirdParty.APP_REQ_DOMAIN}")
+    public String APP_REQ_DOMAIN = null;
+    @Value("${thirdParty.IMG_DOMAIN}")
+    public String IMG_DOMAIN = null;
+    @Value("${thirdParty.IMG_TEST}")
+    public String IMG_TEST = null;
+    @Value("${thirdParty.BASE_DOMAIN}")
+    public String BASE_DOMAIN = null;
 
     //接口URL
     public String COMPONENT_ACCESS_TOKEN_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_component_token";
@@ -393,6 +401,58 @@ public class ThirdParty {
 
     public void setREQ_LOGIN_WXAPP(String REQ_LOGIN_WXAPP) {
         this.REQ_LOGIN_WXAPP = REQ_LOGIN_WXAPP;
+    }
+
+    public static String getAuthorizerRefreshToken() {
+        return AUTHORIZER_REFRESH_TOKEN;
+    }
+
+    public String getAPPX_THIRDPARTY_APPID() {
+        return APPX_THIRDPARTY_APPID;
+    }
+
+    public void setAPPX_THIRDPARTY_APPID(String APPX_THIRDPARTY_APPID) {
+        this.APPX_THIRDPARTY_APPID = APPX_THIRDPARTY_APPID;
+    }
+
+    public String getAPP_REQ_DOMAIN() {
+        return APP_REQ_DOMAIN;
+    }
+
+    public void setAPP_REQ_DOMAIN(String APP_REQ_DOMAIN) {
+        this.APP_REQ_DOMAIN = APP_REQ_DOMAIN;
+    }
+
+    public String getIMG_DOMAIN() {
+        return IMG_DOMAIN;
+    }
+
+    public void setIMG_DOMAIN(String IMG_DOMAIN) {
+        this.IMG_DOMAIN = IMG_DOMAIN;
+    }
+
+    public String getIMG_TEST() {
+        return IMG_TEST;
+    }
+
+    public void setIMG_TEST(String IMG_TEST) {
+        this.IMG_TEST = IMG_TEST;
+    }
+
+    public String getBASE_DOMAIN() {
+        return BASE_DOMAIN;
+    }
+
+    public void setBASE_DOMAIN(String BASE_DOMAIN) {
+        this.BASE_DOMAIN = BASE_DOMAIN;
+    }
+
+    public String getREFRESH_TOKEN() {
+        return REFRESH_TOKEN;
+    }
+
+    public void setREFRESH_TOKEN(String REFRESH_TOKEN) {
+        this.REFRESH_TOKEN = REFRESH_TOKEN;
     }
 }
 

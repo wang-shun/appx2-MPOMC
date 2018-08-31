@@ -6,6 +6,7 @@ import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.dreawer.appxauth.model.func_info;
 import com.dreawer.appxauth.service.AuthService;
+import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.appxauth.utils.Okhttp;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.google.gson.Gson;
@@ -138,6 +139,7 @@ public class AppManager {
         params.put("wsrequestdomain", domain);
         params.put("uploaddomain", domain);
         params.put("downloaddomain", domain);
+        log.info("添加域名:" + JsonFormatUtil.formatJson(params));
         String response = okhttp.postSyncJson(thirdParty.URL_MODIFY_DOMAIN(getAccessToken(appid)), params);
         return response;
     }
@@ -149,7 +151,7 @@ public class AppManager {
      * @return
      * @throws IOException
      */
-    public String commit(String appid, String templateId, String storeId, String domain) throws IOException {
+    public String commit(String appid, String templateId, String storeId) throws IOException {
         Map<String, Object> param = new HashMap<>();
         param.put("template_id", templateId);
         param.put("user_version", "V1.0");
@@ -160,26 +162,15 @@ public class AppManager {
         extJson.put("name", "极乐科技");
         extJson.put("appid", appid);
         extJson.put("storeId", storeId);
-        if (domain.endsWith("/")) {
-            extJson.put("domain", domain);
-        } else {
-            extJson.put("domain", domain + "/");
-        }
-        extJson.put("account", "https://account.dreawer.com/");
-        extJson.put("domainImg", "https://image.dreawer.com/");
-        extJson.put("vipmain", "https://member.dreawer.com/");
-        extJson.put("domainBase", "https://basedata.dreawer.com/");
-        extJson.put("domainImgUpload", "https://imageupload.dreawer.com/");
-        //extJson.put("indexType", "NOVIP");
-//            JSONObject ald = new JSONObject();
-//            ald.put("app_key", appKey);
-//            ald.put("getLocation", 0);
-//            ald.put("getUserinfo", 0);
-//            extJson.put("ald_config", ald);
+        extJson.put("domain", thirdParty.APP_REQ_DOMAIN);
+        extJson.put("domainImg", thirdParty.IMG_DOMAIN);
+        extJson.put("domainBase", thirdParty.BASE_DOMAIN);
+        extJson.put("domainImgUpload", thirdParty.IMG_TEST);
         ext.put("extEnable", true);
         ext.put("extAppid", appid);
         ext.put("ext", extJson);
         param.put("ext_json", ext.toString());
+        log.info("提交ext文件为:" + JsonFormatUtil.formatJson(param));
         String response = okhttp.postSyncJson(thirdParty.URL_COMMIT_CODE(getAccessToken(appid)), param);
         return response;
     }

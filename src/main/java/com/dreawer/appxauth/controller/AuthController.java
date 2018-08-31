@@ -218,6 +218,12 @@ public class AuthController extends BaseController {
         //获取小程序类目
         String category = appManager.getCategory(appid);
 
+        //添加域名
+        appManager.modifyDomain(appid,
+                thirdParty.APP_REQ_DOMAIN,
+                thirdParty.IMG_DOMAIN,
+                thirdParty.IMG_TEST,
+                thirdParty.BASE_DOMAIN);
 
         userCase.setLogo(head_img);
         userCase.setAppCategory(category);
