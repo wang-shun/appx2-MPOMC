@@ -203,14 +203,14 @@ public class AuthController extends BaseController {
 
         //更新应用并创建应用组织
         Application application = appService.updateApplication(appid, principal_name);
-
+        String applicationId = application.getId();
         //创建店铺
-        ResponseCode responseCode = serviceManager.addStore(appid, nick_name, principal_name, head_img, signature, userId);
+        ResponseCode responseCode = serviceManager.addStore(applicationId, appid, nick_name, principal_name, head_img, signature, userId);
         JsonPrimitive data = (JsonPrimitive) responseCode.getData();
         String storeId = data.getAsJsonObject().get("id").getAsString();
 
         //创建管理员
-        serviceManager.initAccount(application.getId(), "RETAIL", userCase.getClientContact());
+        serviceManager.initAccount(applicationId, "RETAIL", userCase.getClientContact());
 
         //授权流程判断,判断用户小程序是否具备部署条件
         List<ResultType> list = appManager.checkAuthorCondition(appid);

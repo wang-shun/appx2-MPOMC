@@ -112,15 +112,22 @@ public class ServiceManager {
     }
 
     /**
-     * 调用店铺中心生成店铺
+     * 添加店铺
+     * @param appid
+     * @param nick_name
+     * @param principal_name
+     * @param head_img
+     * @param signature
+     * @param userId
      * @return
      * @throws Exception
      */
-    public ResponseCode addStore(String appid, String nick_name, String principal_name, String head_img, String signature, String userId) throws Exception {
+    public ResponseCode addStore(String id, String appid, String nick_name, String principal_name, String head_img, String signature, String userId) throws Exception {
         Map<String, Object> addStoreParam = new HashMap<>();
         if (!StringUtils.isBlank(principal_name)) {
             addStoreParam.put("name", principal_name);
         }
+        addStoreParam.put("id", id);
         addStoreParam.put("appName", nick_name);
         addStoreParam.put("logo", head_img);
         addStoreParam.put("intro", signature);
