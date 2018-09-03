@@ -14,7 +14,6 @@ import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.*;
 import com.google.gson.Gson;
-import com.google.gson.JsonPrimitive;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -206,8 +205,8 @@ public class AuthController extends BaseController {
         String applicationId = application.getId();
         //创建店铺
         ResponseCode responseCode = serviceManager.addStore(applicationId, appid, nick_name, principal_name, head_img, signature, userId);
-        JsonPrimitive data = (JsonPrimitive) responseCode.getData();
-        String storeId = data.getAsJsonObject().get("id").getAsString();
+        JSONObject data = (JSONObject) responseCode.getData();
+        String storeId = (String) data.get("id");
 
         //创建管理员
         serviceManager.initAccount(applicationId, "RETAIL", userCase.getClientContact());
