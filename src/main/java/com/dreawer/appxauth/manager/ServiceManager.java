@@ -106,7 +106,7 @@ public class ServiceManager {
         param.put("appId", applicationId);
         param.put("type", type);
         param.put("phoneNumber", phoneNumber);
-        ResponseCode responseCode = callRequest.restPost(goodDetail, param, null);
+        ResponseCode responseCode = callRequest.restPost(initAccount, param, null);
         logger.info("创建管理员帐号返回:" + JsonFormatUtil.formatJson(responseCode));
         return responseCode;
     }
