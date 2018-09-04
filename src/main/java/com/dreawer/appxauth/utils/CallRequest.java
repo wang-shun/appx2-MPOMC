@@ -32,6 +32,7 @@ public class CallRequest {
         String json = gson.toJson(data);
         HttpEntity<String> entity = new HttpEntity<String>(json, headers);
         String response = restTemplate.postForObject(url, entity, String.class);
+        log.info("创建管理员帐号返回:" + response);
         return ResponseCode.instanceOf(response);
 
     }
