@@ -125,20 +125,9 @@ public class AppManager {
      * @throws IOException
      */
     public String modifyDomain(String appid, String... domains) throws IOException {
-        StringBuilder domainList = new StringBuilder();
-        domainList.append("[");
-        for (String domain : domains) {
-            domainList.append(domain + ",");
-        }
-        domainList.deleteCharAt(domainList.length() - 1);
-        domainList.append("]");
-        String domain = domainList.toString();
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("action", "set");
-        params.put("requestdomain", domain);
-        params.put("wsrequestdomain", domain);
-        params.put("uploaddomain", domain);
-        params.put("downloaddomain", domain);
+        params.put("requestdomain", domains);
         log.info("添加域名:" + JsonFormatUtil.formatJson(params));
         String response = okhttp.postSyncJson(thirdParty.URL_MODIFY_DOMAIN(getAccessToken(appid)), params);
         return response;
