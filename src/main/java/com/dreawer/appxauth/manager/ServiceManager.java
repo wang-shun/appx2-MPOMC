@@ -117,13 +117,14 @@ public class ServiceManager {
     /**
      * 创建管理员帐号返回
      */
-    public ResponseCode initAccount(String applicationId, String type, String phoneNumber) throws Exception {
+    public void initAccount(String applicationId, String type, String phoneNumber) throws Exception {
         Map<String, Object> param = new HashMap<>();
         param.put("appId", applicationId);
         param.put("type", type);
         param.put("phoneNumber", phoneNumber);
-        ResponseCode responseCode = callRequest.restPost(initAccount, param, null);
-        return responseCode;
+        String response = callRequest.restPost(initAccount, param);
+        logger.info("创建管理员帐号返回:" + response);
+
     }
 
     /**

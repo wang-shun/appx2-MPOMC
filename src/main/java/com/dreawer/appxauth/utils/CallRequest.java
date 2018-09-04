@@ -32,7 +32,6 @@ public class CallRequest {
         String json = gson.toJson(data);
         HttpEntity<String> entity = new HttpEntity<String>(json, headers);
         String response = restTemplate.postForObject(url, entity, String.class);
-        log.info("创建管理员帐号返回:" + response);
         return ResponseCode.instanceOf(response);
 
     }
@@ -44,5 +43,16 @@ public class CallRequest {
         return ResponseCode.instanceOf(response);
     }
 
+    public String restPost(String url, Object data) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        HttpEntity<String> entity = new HttpEntity<String>(json, headers);
+        String response = restTemplate.postForObject(url, entity, String.class);
+        return response;
+
+    }
 
 }
