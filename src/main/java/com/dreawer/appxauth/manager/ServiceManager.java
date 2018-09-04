@@ -2,6 +2,7 @@ package com.dreawer.appxauth.manager;
 
 import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
 import com.dreawer.appxauth.consts.ThirdParty;
+import com.dreawer.appxauth.form.TokenUser;
 import com.dreawer.appxauth.utils.CallRequest;
 import com.dreawer.appxauth.utils.JsonFormatUtil;
 import com.dreawer.responsecode.rcdt.ResponseCode;
@@ -41,6 +42,8 @@ public class ServiceManager {
 
     private String initAccount = "http://bsmc/init";
 
+    private String getUserDetail = "http://cc/user/detail";
+
     /**
      * 注册小程序用户到用户中心
      *
@@ -58,6 +61,20 @@ public class ServiceManager {
         logger.info("注册小程序用户到用户中心返回:" + JsonFormatUtil.formatJson(responseCode));
         return responseCode;
     }
+
+    /**
+     * 获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    public TokenUser getUserInfo(String userId) {
+        ResponseCode responseCode = callRequest.restGet(getUserDetail + "?userId=" + userId, null);
+        logger.info("获取用户信息返回:" + JsonFormatUtil.formatJson(responseCode));
+        TokenUser tokenUser = new Gson().fromJson(responseCode.getData().toString(), TokenUser.class);
+        return tokenUser;
+    }
+
 
     /**
      * 小程序登录
@@ -99,7 +116,6 @@ public class ServiceManager {
 
     /**
      * 创建管理员帐号返回
-     * * @return
      */
     public ResponseCode initAccount(String applicationId, String type, String phoneNumber) throws Exception {
         Map<String, Object> param = new HashMap<>();

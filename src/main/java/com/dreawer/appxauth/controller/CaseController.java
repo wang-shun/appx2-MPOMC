@@ -9,6 +9,7 @@ import com.dreawer.appxauth.exception.ResponseCodeException;
 import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.appxauth.form.CaseQueryForm;
 import com.dreawer.appxauth.form.CreateUserCaseForm;
+import com.dreawer.appxauth.form.TokenUser;
 import com.dreawer.appxauth.form.UserCaseCountForm;
 import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.QueryType;
@@ -120,6 +121,12 @@ public class CaseController extends BaseController {
         String userId = form.getUserId();
         String spuId = form.getSpuId();
 
+        //获取用户信息
+        TokenUser tokenUser = serviceManager.getUserInfo(userId);
+        if (tokenUser == null) {
+            return Error.EXT_RESPONSE("未查询到用户");
+        }
+
         String remark = null;
         //调用商品服务查询商品信息
         ViewSku sku = null;
@@ -201,8 +208,8 @@ public class CaseController extends BaseController {
             userCase.setName(viewGoods.getName());
             userCase.setAppName(null);
             userCase.setCategoryId(viewGoods.getGroups().get(0).getId());
-            userCase.setClientName("");
-            userCase.setClientContact("");
+            userCase.setClientName(tokenUser.getPetName());
+            userCase.setClientContact(tokenUser.getPhoneNumber());
             userCase.setOrderIds(orderId);
             userCase.setExpireDate(invalidTime);
             userCase.setPublishStatus(PublishStatus.UNAUTHORIZED);
