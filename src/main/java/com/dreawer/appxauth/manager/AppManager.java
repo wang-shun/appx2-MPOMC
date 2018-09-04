@@ -134,7 +134,7 @@ public class AppManager {
         domainList.append("]");
         String domain = domainList.toString();
         Map<String, String> params = new HashMap<>();
-        params.put("action", "add");
+        params.put("action", "set");
         params.put("requestdomain", domain);
         params.put("wsrequestdomain", domain);
         params.put("uploaddomain", domain);
