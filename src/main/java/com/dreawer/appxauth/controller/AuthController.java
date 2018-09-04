@@ -207,7 +207,7 @@ public class AuthController extends BaseController {
         //创建店铺
         ResponseCode responseCode = serviceManager.addStore(applicationId, appid, nick_name, principal_name, head_img, signature, userId);
         JsonObject data = (JsonObject) responseCode.getData();
-        String storeId = data.get("id").toString();
+        String storeId = data.get("id").getAsString();
 
         //创建管理员
         serviceManager.initAccount(applicationId, "RETAIL", userCase.getClientContact());
