@@ -189,6 +189,7 @@ public class UserCaseService {
         if (list.size() == 0) {
             userCaseDao.updateUserCase(userCase);
             userCase.setPublishStatus(PublishStatus.AUTHORIZED);
+            userCaseDao.updateUserCase(userCase);
             return userCase;
         }
         //如果个人用户购买ECS则通过授权
