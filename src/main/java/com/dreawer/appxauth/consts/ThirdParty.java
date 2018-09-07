@@ -54,6 +54,8 @@ public class ThirdParty {
     public String IMG_TEST = null;
     @Value("${thirdParty.BASE_DOMAIN}")
     public String BASE_DOMAIN = null;
+    @Value("${thirdParty.BACK_URL}")
+    public String BACK_URL = null;
 
     //接口URL
     public String COMPONENT_ACCESS_TOKEN_QUERY = "https://api.weixin.qq.com/cgi-bin/component/api_component_token";
@@ -453,6 +455,14 @@ public class ThirdParty {
 
     public void setREFRESH_TOKEN(String REFRESH_TOKEN) {
         this.REFRESH_TOKEN = REFRESH_TOKEN;
+    }
+
+    public String getBACK_URL() {
+        return BACK_URL;
+    }
+
+    public void setBACK_URL(String BACK_URL) {
+        this.BACK_URL = BACK_URL;
     }
 }
 

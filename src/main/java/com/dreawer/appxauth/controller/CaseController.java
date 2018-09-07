@@ -2,6 +2,7 @@ package com.dreawer.appxauth.controller;
 
 import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
 import com.dreawer.appxauth.RibbonClient.form.ViewSku;
+import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.AppCase;
 import com.dreawer.appxauth.domain.CaseCountForm;
 import com.dreawer.appxauth.domain.UserCase;
@@ -27,6 +28,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +56,8 @@ public class CaseController extends BaseController {
 
     private Logger logger = Logger.getLogger(this.getClass()); // 日志记录器
 
-
+    @Autowired
+    private ThirdParty thirdParty;
 
     /**
      * 请求展示小程序方案
@@ -204,7 +207,7 @@ public class CaseController extends BaseController {
             //获取后台url
             //设置类目名和ID
             userCase.setSpuId(viewGoods.getId());
-            userCase.setBackendUrl("https://appx.dreawer.com/management");
+            userCase.setBackendUrl(thirdParty.BACK_URL);
             userCase.setName(viewGoods.getName());
             userCase.setAppName(null);
             userCase.setCategoryId(viewGoods.getGroups().get(0).getId());

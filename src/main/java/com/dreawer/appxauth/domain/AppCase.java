@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 @Data
 public class AppCase extends BaseDomain {
 
+
     private static final long serialVersionUID = -3302712110526567596L;
 
     private String title = null; //标题
