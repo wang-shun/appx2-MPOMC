@@ -168,13 +168,12 @@ public class AuthController extends BaseController {
      * @return
      */
     @GetMapping("/wxApp")
-    @ResponseBody
-    public ResponseCode WxAppAuth(@RequestParam("auth_code") String authorizationCode,
-                                  @RequestParam("expires_in") String expiresIn,
-                                  @RequestParam("id") String id) throws Exception {
+    public String WxAppAuth(@RequestParam("auth_code") String authorizationCode,
+                            @RequestParam("expires_in") String expiresIn,
+                            @RequestParam("id") String id) throws Exception {
         UserCase userCase = userCaseService.findById(id);
         if (userCase == null) {
-            return Error.DB("解决方案不存在");
+            log.info("解决方案不存在:" + userCase.getId());
         }
         String userId = userCase.getCreaterId();
         AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
@@ -231,8 +230,8 @@ public class AuthController extends BaseController {
         userCase.setAppId(appid);
         userCase.setStoreId(storeId);
         //更新用户授权结果和昵称头像,APPID
-        userCase = userCaseService.updateAuditResult(userCase, list);
-        return Success.SUCCESS(userCase);
+        userCaseService.updateAuditResult(userCase, list);
+        return "redirect:https://appx.dreawer.com/personal/server";
 
     }
 
