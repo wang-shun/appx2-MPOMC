@@ -306,7 +306,7 @@ public class AuthController extends BaseController {
      */
     @PostMapping(value = "/getPhone")
     public @ResponseBody
-    ResponseCode getPhone(@Valid WxLoginForm form, BindingResult result) {
+    ResponseCode getPhone(@RequestBody @Valid WxLoginForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
