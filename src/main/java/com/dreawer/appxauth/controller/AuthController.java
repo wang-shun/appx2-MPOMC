@@ -4,6 +4,8 @@ import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.domain.Application;
 import com.dreawer.appxauth.domain.ApplicationUser;
 import com.dreawer.appxauth.domain.UserCase;
+import com.dreawer.appxauth.exception.ResponseCodeException;
+import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.appxauth.form.WxLoginForm;
 import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.manager.TokenManager;
@@ -170,69 +172,83 @@ public class AuthController extends BaseController {
     @GetMapping("/wxApp")
     public String WxAppAuth(@RequestParam("auth_code") String authorizationCode,
                             @RequestParam("expires_in") String expiresIn,
-                            @RequestParam("id") String id) throws Exception {
-        UserCase userCase = userCaseService.findById(id);
-        if (userCase == null) {
-            log.info("解决方案不存在:" + userCase.getId());
+                            @RequestParam("id") String id) {
+        try {
+            UserCase userCase = userCaseService.findById(id);
+            if (userCase == null) {
+                log.info("解决方案不存在:" + id);
+            }
+            String userId = userCase.getCreaterId();
+            AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
+            log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
+            //小程序appid
+            String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
+
+            //更新授权信息(令牌和刷新令牌)
+            authService.updateAuthInfo(authorizationCode, expiresIn, userId, authorizeInfo, appid);
+
+            //获取授权详情
+            AuthorizeInfo appDetail = appManager.getAuthorizerInfo(appid);
+
+            Authorizer_info authorizer_info = appDetail.getAuthorizer_info();
+
+            //授权基本信息
+            //小程序昵称
+            String nick_name = authorizer_info.getNick_name();
+            //公司名称
+            String principal_name = authorizer_info.getPrincipal_name();
+            //小程序logo
+            String head_img = authorizer_info.getHead_img();
+            //小程序简介
+            String signature = authorizer_info.getSignature();
+
+
+            //更新应用并创建应用组织
+            Application application = appService.updateApplication(appid, principal_name);
+            String applicationId = application.getId();
+            //创建店铺
+            ResponseCode responseCode = serviceManager.addStore(applicationId, appid, nick_name, principal_name, head_img, signature, userId);
+            JsonObject data = (JsonObject) responseCode.getData();
+            String storeId = data.get("id").getAsString();
+
+            //创建管理员
+            serviceManager.initAccount(applicationId, "RETAIL", userCase.getClientContact());
+
+            //授权流程判断,判断用户小程序是否具备部署条件
+            List<ResultType> list = appManager.checkAuthorCondition(appid);
+
+            //获取小程序类目
+            String category = appManager.getCategory(appid);
+
+            //添加域名
+            appManager.modifyDomain(appid,
+                    thirdParty.APP_REQ_DOMAIN,
+                    thirdParty.IMG_DOMAIN,
+                    thirdParty.IMG_TEST,
+                    thirdParty.BASE_DOMAIN);
+
+            userCase.setLogo(head_img);
+            userCase.setAppCategory(category);
+            userCase.setAppName(nick_name);
+            userCase.setAppId(appid);
+            userCase.setStoreId(storeId);
+            //更新用户授权结果和昵称头像,APPID
+            userCaseService.updateAuditResult(userCase, list);
+            return "redirect:https://appx.dreawer.com/personal/server";
+
+        } catch (WxAppException e) {
+            log.error("异常", e);
+            return "redirect:https://appx.dreawer.com/personal/server";
+        } catch (IOException e) {
+            log.error("异常", e);
+            e.printStackTrace();
+        } catch (ResponseCodeException e) {
+            e.printStackTrace();
+            return "redirect:https://appx.dreawer.com/personal/server";
+        } catch (Throwable e) {
+            return "redirect:https://appx.dreawer.com/personal/server";
         }
-        String userId = userCase.getCreaterId();
-        AuthorizeInfo authorizeInfo = tokenManager.getAuthorizeInfo(authorizationCode);
-        log.info("小程序授权成功!授权人信息:" + authorizeInfo.toString());
-        //小程序appid
-        String appid = authorizeInfo.getAuthorization_info().getAuthorizer_appid();
-
-        //更新授权信息(令牌和刷新令牌)
-        authService.updateAuthInfo(authorizationCode, expiresIn, userId, authorizeInfo, appid);
-
-        //获取授权详情
-        AuthorizeInfo appDetail = appManager.getAuthorizerInfo(appid);
-
-        Authorizer_info authorizer_info = appDetail.getAuthorizer_info();
-
-        //授权基本信息
-        //小程序昵称
-        String nick_name = authorizer_info.getNick_name();
-        //公司名称
-        String principal_name = authorizer_info.getPrincipal_name();
-        //小程序logo
-        String head_img = authorizer_info.getHead_img();
-        //小程序简介
-        String signature = authorizer_info.getSignature();
-
-
-        //更新应用并创建应用组织
-        Application application = appService.updateApplication(appid, principal_name);
-        String applicationId = application.getId();
-        //创建店铺
-        ResponseCode responseCode = serviceManager.addStore(applicationId, appid, nick_name, principal_name, head_img, signature, userId);
-        JsonObject data = (JsonObject) responseCode.getData();
-        String storeId = data.get("id").getAsString();
-
-        //创建管理员
-        serviceManager.initAccount(applicationId, "RETAIL", userCase.getClientContact());
-
-        //授权流程判断,判断用户小程序是否具备部署条件
-        List<ResultType> list = appManager.checkAuthorCondition(appid);
-
-        //获取小程序类目
-        String category = appManager.getCategory(appid);
-
-        //添加域名
-        appManager.modifyDomain(appid,
-                thirdParty.APP_REQ_DOMAIN,
-                thirdParty.IMG_DOMAIN,
-                thirdParty.IMG_TEST,
-                thirdParty.BASE_DOMAIN);
-
-        userCase.setLogo(head_img);
-        userCase.setAppCategory(category);
-        userCase.setAppName(nick_name);
-        userCase.setAppId(appid);
-        userCase.setStoreId(storeId);
-        //更新用户授权结果和昵称头像,APPID
-        userCaseService.updateAuditResult(userCase, list);
         return "redirect:https://appx.dreawer.com/personal/server";
-
     }
 
 
@@ -280,5 +296,32 @@ public class AuthController extends BaseController {
         return Success.SUCCESS(categoryList);
     }
 
+
+    /**
+     * 小程序获取手机号
+     *
+     * @param form
+     * @param result
+     * @return
+     */
+    @PostMapping(value = "/getPhone")
+    public @ResponseBody
+    ResponseCode getPhone(@Valid WxLoginForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
+        }
+        try {
+            String response = appManager.wxLogin(form.getAppid(), form.getCode());
+            JSONObject jsonObject = new JSONObject(response);
+            String sessionKey = (String) jsonObject.get("session_key");
+            String data = decrypt(form.getEncryptedData(), sessionKey, form.getIv());
+            JSONObject dataJson = new JSONObject(data);
+            return Success.SUCCESS(dataJson.getString("phoneNumber"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("异常", e);
+            return Error.APPSERVER;
+        }
+    }
 
 }
