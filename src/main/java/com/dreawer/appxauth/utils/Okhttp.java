@@ -1,6 +1,7 @@
 package com.dreawer.appxauth.utils;
 
 import com.dreawer.appxauth.consts.ThirdParty;
+import com.dreawer.appxauth.exception.WxAppException;
 import com.dreawer.appxauth.manager.TokenManager;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.Success;
@@ -206,6 +207,11 @@ public class Okhttp {
         String errcode;
         if (jsonObject.has("errcode")) {
             errcode = jsonObject.get("errcode") + "";
+            //微信61007错误码为小程序在授权给该平台时之前已经授权给上一个平台
+            //导致接调用失败,这种情况下所有开发接口均不可使用,需抛出异常给上层处理
+            if (errcode.equals("61007")) {
+                throw new WxAppException("61007", "该小程序已经授权给其他第三方平台");
+            }
             //42001token过期 重新刷新
             if (errcode.equals("42001")) {
                 String token = tokenManager.refreshToken(appid);

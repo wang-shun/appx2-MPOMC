@@ -62,10 +62,7 @@ public class DeployController extends BaseController {
             return Error.DB("未查询到解决方案");
         }
         PublishStatus publishStatus = userCase.getPublishStatus();
-        if (publishStatus.equals(PublishStatus.AUDITFAILED) ||
-                publishStatus.equals(PublishStatus.UNAUTHORIZED) ||
-                publishStatus.equals(PublishStatus.MISSINGCONDITION) ||
-                publishStatus.equals(PublishStatus.SUBMITFAILED)) {
+        if (publishStatus.equals(PublishStatus.AUTHORIZED)) {
 
             ViewGoods viewGoods = serviceManager.goodDetail(userCase.getSpuId(), userid);
             String templetId = viewGoods.getViewApp().getTempletId();

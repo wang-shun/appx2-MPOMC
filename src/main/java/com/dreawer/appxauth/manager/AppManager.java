@@ -82,7 +82,6 @@ public class AppManager {
         //然后判断权限
         Boolean fun17 = false;
         Boolean fun18 = false;
-        Boolean fun25 = false;
         List<func_info> func_info = authorizerInfo.getAuthorization_info().getFunc_info();
         for (func_info funcInfo : func_info) {
             if (funcInfo.getFuncscope_category().getId() == 17) {
@@ -91,12 +90,13 @@ public class AppManager {
             if (funcInfo.getFuncscope_category().getId() == 18) {
                 fun18 = true;
             }
-            if (funcInfo.getFuncscope_category().getId() == 25) {
-                fun25 = true;
-            }
+
         }
-        if (!fun17 || !fun18 || !fun25) {
+        //如果未提供开发权限,则无法继续调用其他接口,直接返回
+        if (!fun17 || !fun18) {
             list.add(ResultType.PERMISSIONDENIED);
+            log.info("未提供开发权限");
+            return list;
         }
         //再判断名称是否填写
         if (StringUtils.isBlank(authorizerInfo.getAuthorizer_info().getNick_name())) {
@@ -108,11 +108,11 @@ public class AppManager {
         if (jsonObject.getJSONArray("category_list").length() == 0) {
             list.add(ResultType.CATEGORY);
         }
-        logger.info("检查权限结果:");
+        log.info("检查权限结果:");
         list.forEach(x -> {
-            logger.info(x);
+            log.info("权限：" + x);
         });
-        logger.info("总数:" + list.size());
+        log.info("总数:" + list.size());
         return list;
     }
 

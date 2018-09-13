@@ -173,8 +173,9 @@ public class AuthController extends BaseController {
     public String WxAppAuth(@RequestParam("auth_code") String authorizationCode,
                             @RequestParam("expires_in") String expiresIn,
                             @RequestParam("id") String id) {
+        UserCase userCase;
         try {
-            UserCase userCase = userCaseService.findById(id);
+            userCase = userCaseService.findById(id);
             if (userCase == null) {
                 log.info("解决方案不存在:" + id);
             }
@@ -203,6 +204,7 @@ public class AuthController extends BaseController {
             String signature = authorizer_info.getSignature();
 
 
+
             //更新应用并创建应用组织
             Application application = appService.updateApplication(appid, principal_name);
             String applicationId = application.getId();
@@ -217,9 +219,15 @@ public class AuthController extends BaseController {
             //授权流程判断,判断用户小程序是否具备部署条件
             List<ResultType> list = appManager.checkAuthorCondition(appid);
 
+            if (list.contains(ResultType.PERMISSIONDENIED)) {
+                userCase.setLogo(head_img);
+                userCase.setAppName(nick_name);
+                userCase.setAppId(appid);
+                userCaseService.updateAuditResult(userCase, list);
+                return "redirect:https://appx.dreawer.com/personal/server?type=" + ResultType.PERMISSIONDENIED;
+            }
             //获取小程序类目
             String category = appManager.getCategory(appid);
-
             //添加域名
             appManager.modifyDomain(appid,
                     thirdParty.APP_REQ_DOMAIN,
@@ -227,14 +235,20 @@ public class AuthController extends BaseController {
                     thirdParty.IMG_TEST,
                     thirdParty.BASE_DOMAIN);
 
-            userCase.setLogo(head_img);
             userCase.setAppCategory(category);
+            userCase.setLogo(head_img);
             userCase.setAppName(nick_name);
             userCase.setAppId(appid);
             userCase.setStoreId(storeId);
             //更新用户授权结果和昵称头像,APPID
             userCaseService.updateAuditResult(userCase, list);
-            return "redirect:https://appx.dreawer.com/personal/server";
+            StringBuffer stringBuffer = new StringBuffer();
+            list.forEach(x -> {
+                stringBuffer.append(x);
+                stringBuffer.append(",");
+            });
+            String result = stringBuffer.substring(0, stringBuffer.length() - 1);
+            return "redirect:https://appx.dreawer.com/personal/server?type=" + result;
 
         } catch (WxAppException e) {
             log.error("异常", e);

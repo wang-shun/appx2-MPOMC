@@ -221,7 +221,7 @@ public class UserCaseService {
         }
         String result = auditResult.substring(1, auditResult.length());
         userCase.setAuditResult(result);
-        userCase.setPublishStatus(PublishStatus.MISSINGCONDITION);
+        userCase.setPublishStatus(PublishStatus.AUTHORIZED);
         logger.info("更新后结果" + JsonFormatUtil.formatJson(userCase));
         userCaseDao.updateUserCase(userCase);
         return userCase;

@@ -20,7 +20,12 @@ public enum ResultType {
     /**
      * 名称未填写
      **/
-    NAME;
+    NAME,
+
+    /**
+     * 已经授权给其他第三方平台
+     */
+    ALREADYAUTHORIZED;
 
 
     /**
