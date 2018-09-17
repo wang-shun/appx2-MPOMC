@@ -4,6 +4,7 @@ import com.dreawer.appxauth.RibbonClient.form.ViewGoods;
 import com.dreawer.appxauth.domain.UserCase;
 import com.dreawer.appxauth.lang.CommitType;
 import com.dreawer.appxauth.lang.PublishStatus;
+import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.Success;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * <CODE>DeployController</CODE>
@@ -61,9 +63,34 @@ public class DeployController extends BaseController {
         if (userCase == null) {
             return Error.DB("未查询到解决方案");
         }
+
         PublishStatus publishStatus = userCase.getPublishStatus();
         if (publishStatus.equals(PublishStatus.AUTHORIZED)) {
-
+            //权限判断
+            List<ResultType> list = appManager.checkAuthorCondition(userCase.getAppId());
+            if (list.contains(ResultType.PERMISSIONDENIED)) {
+                userCase.setAuditResult("用户未提供开发权限");
+                userCase.setPublishStatus(PublishStatus.SUBMITFAILED);
+                userCaseService.updateUserCase(userCase);
+                return Error.PERMISSION("提交失败");
+            } else {
+                StringBuilder auditResult = new StringBuilder();
+                if (list.size() >= 1) {
+                    for (ResultType resultType : list) {
+                        if (resultType.equals(ResultType.CATEGORY)) {
+                            auditResult.append(";小程序类目未填写");
+                        }
+                        if (resultType.equals(ResultType.NAME)) {
+                            auditResult.append(";小程序名称未填写");
+                        }
+                    }
+                    String result = auditResult.substring(1, auditResult.length());
+                    userCase.setPublishStatus(PublishStatus.SUBMITFAILED);
+                    userCase.setAuditResult(result);
+                    userCaseService.updateUserCase(userCase);
+                    return Error.PERMISSION("提交失败");
+                }
+            }
             ViewGoods viewGoods = serviceManager.goodDetail(userCase.getSpuId(), userid);
             String templetId = viewGoods.getViewApp().getTempletId();
             String appId = userCase.getAppId();
