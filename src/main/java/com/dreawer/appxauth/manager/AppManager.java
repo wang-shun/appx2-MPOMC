@@ -158,7 +158,8 @@ public class AppManager {
         ext.put("extEnable", true);
         ext.put("extAppid", appid);
         ext.put("ext", extJson);
-        param.put("ext_json", ext.toString());
+        String ext_json = new Gson().toJson(ext);
+        param.put("ext_json", ext_json);
         log.info("提交ext文件为:" + JsonFormatUtil.formatJson(param));
         String response = okhttp.postSyncJson(thirdParty.URL_COMMIT_CODE(getAccessToken(appid)), param);
         return response;
