@@ -251,7 +251,7 @@ public class AppManager {
      * @throws IOException
      */
     public String getLatestAuditStatus(String appid) throws IOException {
-        return okhttp.getSync(thirdParty.URL_SUBMIT_AUDIT(getAccessToken(appid)));
+        return okhttp.getSync(thirdParty.URL_GET_LATEST_AUDITSTATUS(getAccessToken(appid)));
     }
 
 
