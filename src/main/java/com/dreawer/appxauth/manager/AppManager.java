@@ -56,6 +56,7 @@ public class AppManager {
      */
     public String getAccessToken(String appid) throws IOException {
         AuthInfo authInfo = authService.findByAppid(appid);
+        log.info("小程序授权信息查询结果为:" + JsonFormatUtil.formatJson(authInfo));
         if (authInfo != null) {
             String accessToken = authInfo.getAccessToken();
             ResponseCode responseCode = okhttp.testToken(accessToken, appid);
