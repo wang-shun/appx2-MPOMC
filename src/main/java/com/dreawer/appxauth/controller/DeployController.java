@@ -97,6 +97,8 @@ public class DeployController extends BaseController {
             //提交代码
             commitCode(templetId, appId, storeId);
             String auditId = appManager.submitAudit(appId);
+            userCase.setPublishStatus(PublishStatus.PENDING);
+            userCaseService.updateUserCase(userCase);
             return Success.SUCCESS(auditId);
         } else {
             return Error.PERMISSION("审核条件不足");
