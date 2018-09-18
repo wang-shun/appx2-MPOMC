@@ -58,7 +58,6 @@ public class DeployController extends BaseController {
     @ResponseBody
     public ResponseCode submitAudit(HttpServletRequest req,
                                     @RequestParam("id") String id) throws JSONException, IOException {
-        String userid = req.getHeader("userid");
         UserCase userCase = userCaseService.findById(id);
         if (userCase == null) {
             return Error.DB("未查询到解决方案");
@@ -91,7 +90,7 @@ public class DeployController extends BaseController {
                     return Error.PERMISSION("提交失败");
                 }
             }
-            ViewGoods viewGoods = serviceManager.goodDetail(userCase.getSpuId(), userid);
+            ViewGoods viewGoods = serviceManager.goodDetail(userCase.getSpuId(), userCase.getCreaterId());
             String templetId = viewGoods.getViewApp().getTempletId();
             String appId = userCase.getAppId();
             String storeId = userCase.getStoreId();
