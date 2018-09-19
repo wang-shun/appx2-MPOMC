@@ -167,7 +167,7 @@ public class AuthController extends BaseController {
      * @param authorizationCode 授权码
      * @param expiresIn         到期时间
      * @param id                用户解决方案ID
-     * @return
+     * @return Resp
      */
     @GetMapping("/wxApp")
     public String WxAppAuth(@RequestParam("auth_code") String authorizationCode,
