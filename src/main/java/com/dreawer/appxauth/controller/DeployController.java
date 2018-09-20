@@ -82,12 +82,22 @@ public class DeployController extends BaseController {
                         if (resultType.equals(ResultType.NAME)) {
                             auditResult.append(";小程序名称未填写");
                         }
+                        if (resultType.equals(ResultType.PRINCIPAL)) {
+                            //如果是非ECS小程序则报错
+                            if (!userCase.getDomain().equals("https://ecs.dreawer.com/")) {
+                                auditResult.append(";小程序主体需为企业");
+                            }
+                        }
                     }
-                    String result = auditResult.substring(1, auditResult.length());
-                    userCase.setPublishStatus(PublishStatus.SUBMITFAILED);
-                    userCase.setAuditResult(result);
-                    userCaseService.updateUserCase(userCase);
-                    return Error.PERMISSION("提交失败");
+                    String result;
+                    if (auditResult.length() > 2) {
+                        result = auditResult.substring(1, auditResult.length());
+                        userCase.setPublishStatus(PublishStatus.SUBMITFAILED);
+                        userCase.setAuditResult(result);
+                        userCaseService.updateUserCase(userCase);
+                        return Error.PERMISSION("提交失败");
+                    }
+
                 }
             }
             ViewGoods viewGoods = serviceManager.goodDetail(userCase.getSpuId(), userCase.getCreaterId());

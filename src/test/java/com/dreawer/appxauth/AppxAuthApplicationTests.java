@@ -2,6 +2,7 @@ package com.dreawer.appxauth;
 
 import com.dreawer.appxauth.consts.ThirdParty;
 import com.dreawer.appxauth.controller.AuthController;
+import com.dreawer.appxauth.lang.ResultType;
 import com.dreawer.appxauth.model.AuthorizeInfo;
 import com.google.gson.Gson;
 import org.apache.http.entity.StringEntity;
@@ -19,6 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -84,5 +88,29 @@ public class AppxAuthApplicationTests {
     @Autowired
     private AuthController authController;
 
+    @Test
+    public void test4() {
+        List<ResultType> list = new ArrayList<>();
+        list.add(ResultType.PRINCIPAL);
+        StringBuilder auditResult = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            ResultType type = list.get(i);
+            if (type.equals(ResultType.PERMISSIONDENIED)) {
+                auditResult.append(";用户未提供开发权限");
+            }
+            //如果非ECS小程序为个人主体
+            if (type.equals(ResultType.PRINCIPAL)) {
+                auditResult.append(";小程序主体需为企业");
+            }
+            if (type.equals(ResultType.NAME)) {
+                auditResult.append(";小程序名称未填写");
+            }
+            if (type.equals(ResultType.CATEGORY)) {
+                auditResult.append(";小程序类目未填写");
+            }
+        }
+        String result = auditResult.substring(1, auditResult.length());
+        System.out.println(result);
+    }
 
 }
