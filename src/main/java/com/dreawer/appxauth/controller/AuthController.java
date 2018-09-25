@@ -251,10 +251,10 @@ public class AuthController extends BaseController {
             return "redirect:https://appx.dreawer.com/personal/server?type=" + result;
 
         } catch (WxAppException e) {
-            log.error("异常", e);
+            log.info("异常", e);
             return "redirect:https://appx.dreawer.com/personal/server";
         } catch (IOException e) {
-            log.error("异常", e);
+            log.info("异常", e);
             e.printStackTrace();
         } catch (ResponseCodeException e) {
             e.printStackTrace();
