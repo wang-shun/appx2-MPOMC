@@ -44,6 +44,8 @@ public class ServiceManager {
 
     private String getUserDetail = "http://cc/user/detail";
 
+    private String appxDefaultLogo = "http://wx.qlogo.cn/mmopen/4k1ccrwJlGLaLROibLLZtlpgJRIDV5vltRobjMbjhXhH9DUNQTbzic8CSkDAu2sfnoPz4xy2viaUE1bQvFC9JDWqMSB3ON4v77q/0";
+
     /**
      * 注册小程序用户到用户中心
      *
@@ -143,10 +145,21 @@ public class ServiceManager {
         if (!StringUtils.isBlank(principal_name)) {
             addStoreParam.put("name", principal_name);
         }
+        //如果用户未完善名称头像,则给予默认头像和名称
+        if (StringUtils.isBlank(nick_name)) {
+            addStoreParam.put("appName", "极乐用户");
+        } else {
+            addStoreParam.put("appName", nick_name);
+        }
+        if (StringUtils.isBlank(head_img)) {
+            addStoreParam.put("logo", appxDefaultLogo);
+        } else {
+            addStoreParam.put("logo", head_img);
+        }
         addStoreParam.put("id", id);
-        addStoreParam.put("appName", nick_name);
-        addStoreParam.put("logo", head_img);
-        addStoreParam.put("intro", signature);
+        if (!StringUtils.isBlank(signature)) {
+            addStoreParam.put("intro", signature);
+        }
         addStoreParam.put("appid", appid);
         ResponseCode responseCode = callRequest.restPost(addEnterprise, addStoreParam, userId);
         logger.info("生成店铺返回:" + JsonFormatUtil.formatJson(responseCode));
