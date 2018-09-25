@@ -64,7 +64,8 @@ public class DeployController extends BaseController {
         }
 
         PublishStatus publishStatus = userCase.getPublishStatus();
-        if (publishStatus.equals(PublishStatus.AUTHORIZED)) {
+        if (publishStatus.equals(PublishStatus.AUTHORIZED) || publishStatus.equals(PublishStatus.AUDITFAILED)
+                || publishStatus.equals(PublishStatus.SUBMITFAILED)) {
             //权限判断
             List<ResultType> list = appManager.checkAuthorCondition(userCase.getAppId());
             if (list.contains(ResultType.PERMISSIONDENIED)) {

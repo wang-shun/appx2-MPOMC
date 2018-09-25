@@ -175,6 +175,7 @@ public class AppManager {
      */
     public String getPreviewQR(String appid) throws IOException {
         String response = okhttp.getSync(thirdParty.URL_QR_CODE(getAccessToken(appid)));
+
         return response;
     }
 

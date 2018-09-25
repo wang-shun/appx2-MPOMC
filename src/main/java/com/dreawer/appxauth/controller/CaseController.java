@@ -16,6 +16,7 @@ import com.dreawer.appxauth.lang.PublishStatus;
 import com.dreawer.appxauth.lang.QueryType;
 import com.dreawer.appxauth.lang.SaleMode;
 import com.dreawer.appxauth.utils.JsonFormatUtil;
+import com.dreawer.appxauth.utils.PropertiesUtils;
 import com.dreawer.responsecode.rcdt.Error;
 import com.dreawer.responsecode.rcdt.ResponseCode;
 import com.dreawer.responsecode.rcdt.ResponseCodeRepository;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -58,6 +60,9 @@ public class CaseController extends BaseController {
 
     @Autowired
     private ThirdParty thirdParty;
+
+    @Autowired
+    private PropertiesUtils propertiesUtils;
 
     /**
      * 请求展示小程序方案
@@ -235,102 +240,114 @@ public class CaseController extends BaseController {
     @ApiImplicitParam(name = "status", value = "ONGING进行中,EXPIRED已失效,ALL全部")
     @PostMapping(value = "/query/{status}")
     public @ResponseBody
-    ResponseCode query(@PathVariable("status") String status, @RequestBody @Valid CaseQueryForm form, BindingResult result) {
+    ResponseCode query(@PathVariable("status") String status, @RequestBody @Valid CaseQueryForm form, BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return ResponseCodeRepository.fetch(result.getFieldError().getDefaultMessage(), result.getFieldError().getField(), Error.ENTRY);
         }
-        try {
-            UserCase userCase = new UserCase();
-            QueryType type = form.getType();
-            if (type.equals(QueryType.BACKEND)) {
-                //后台查询
-                if (StringUtils.isBlank(form.getStoreId())) {
-                    return Error.RECEIVE("请输入店铺ID");
-                }
 
-            } else if (type.equals(QueryType.CUSTOMER)) {
-                userCase.setCreaterId(form.getUserId());
-            } else {
-                return Error.RECEIVE("用户身份无效");
+        UserCase userCase = new UserCase();
+        QueryType type = form.getType();
+        if (type.equals(QueryType.BACKEND)) {
+            //后台查询
+            if (StringUtils.isBlank(form.getStoreId())) {
+                return Error.RECEIVE("请输入店铺ID");
             }
-            Timestamp startTime = null;
-            Timestamp endTime = null;
-            if (form.getStartTime() != null) {
-                startTime = new Timestamp(form.getStartTime());
-            }
-            if (form.getEndTime() != null) {
-                endTime = new Timestamp(form.getEndTime());
-            }
-            int pageNo = 1;
-            int pageSize = 5;
-            if (form.getPageNo() != null && form.getPageNo() > 0) {
-                pageNo = form.getPageNo();
-            }
-            if (form.getPageSize() != null && form.getPageSize() > 0) {
-                pageSize = form.getPageSize();
-            }
-            int start = (pageNo - 1) * pageSize;
 
-            String contact = null;
-            if (form.getContact() != null) {
-                contact = form.getContact();
+        } else if (type.equals(QueryType.CUSTOMER)) {
+            userCase.setCreaterId(form.getUserId());
+        } else {
+            return Error.RECEIVE("用户身份无效");
+        }
+        Timestamp startTime = null;
+        Timestamp endTime = null;
+        if (form.getStartTime() != null) {
+            startTime = new Timestamp(form.getStartTime());
+        }
+        if (form.getEndTime() != null) {
+            endTime = new Timestamp(form.getEndTime());
+        }
+        int pageNo = 1;
+        int pageSize = 5;
+        if (form.getPageNo() != null && form.getPageNo() > 0) {
+            pageNo = form.getPageNo();
+        }
+        if (form.getPageSize() != null && form.getPageSize() > 0) {
+            pageSize = form.getPageSize();
+        }
+        int start = (pageNo - 1) * pageSize;
+
+        String contact = null;
+        if (form.getContact() != null) {
+            contact = form.getContact();
                 /*if (Pattern.matches("^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9])\\d{8}$",contact)){
                 }else if (Pattern.matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$\n",contact)){
                 }*/
-            }
-            userCase.setClientName(form.getCustomerName());
-            userCase.setClientContact(form.getContact());
-            userCase.setAppId(form.getAppid());
-            userCase.setPublishStatus(form.getPublishStatus());
-            userCase.setCategoryId(form.getCategoryId());
-            userCase.setName(form.getName());
-            userCase.setAppName(form.getAppName());
+        }
+        userCase.setClientName(form.getCustomerName());
+        userCase.setClientContact(form.getContact());
+        userCase.setAppId(form.getAppid());
+        userCase.setPublishStatus(form.getPublishStatus());
+        userCase.setCategoryId(form.getCategoryId());
+        userCase.setName(form.getName());
+        userCase.setAppName(form.getAppName());
 
-            List<UserCase> list = userCaseService.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize, status);
-//
-//            for (UserCase node : list) {
-//                if (node.getPublishStatus().equals(PublishStatus.PENDING)) {
-//                    String appId = node.getAppId();
-//                    if (appId != null) {
-//                        String response = appManager.getLatestAuditStatus(appId);
-//                        JSONObject auditStatus = new JSONObject(response);
-//                        if (auditStatus.has("status")) {
-//                            if (auditStatus.getInt("status") == 0) {
-//                                node.setPublishStatus(PublishStatus.UNPUBLISHED);
-//                                node.setAuditResult("审核通过");
-//                                userCaseService.updateUserCase(node);
-//                            } else if (auditStatus.getInt("status") == 1) {
-//                                node.setPublishStatus(PublishStatus.AUDITFAILED);
-//                                String reason = auditStatus.getString("reason");
-//                                node.setAuditResult(reason);
-//                                userCaseService.updateUserCase(node);
-//                            }
-//                        } else {
-//                            //如果客户取消授权或其他微信问题
-//                            String errmsg = auditStatus.getString("errmsg");
-//                            node.setAuditResult(errmsg);
-//                            node.setPublishStatus(PublishStatus.AUDITFAILED);
-//                            userCaseService.updateUserCase(node);
-//                        }
-//                    }
-//                }
-//            }
+        List<UserCase> list = userCaseService.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize, status);
 
-            Map<String, Object> pageParam = new HashMap<>();
-            int totalSize = userCaseService.getUserCaseByConditionCount(userCase, contact, startTime, endTime, status);
-            int totalPage = totalSize % pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize + 1);
-            pageParam.put("totalSize", totalSize);
-            pageParam.put("totalPage", totalPage);
-            Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("userCases", list);
-            resultMap.put("pageParam", pageParam);
-            return Success.SUCCESS(resultMap);
+        try {
+            for (UserCase node : list)
+                if (node.getPublishStatus().equals(PublishStatus.PENDING)) {
+                    String appId = node.getAppId();
+                    if (appId != null) {
+                        String response = appManager.getLatestAuditStatus(appId);
+                        JSONObject auditStatus = new JSONObject(response);
+                        if (auditStatus.has("status")) {
+                            if (auditStatus.getInt("status") == 0) {
+                                node.setPublishStatus(PublishStatus.UNPUBLISHED);
+                                node.setAuditResult("审核通过");
+                                userCaseService.updateUserCase(node);
+                            } else if (auditStatus.getInt("status") == 1) {
+                                node.setPublishStatus(PublishStatus.AUDITFAILED);
+                                String reason = auditStatus.getString("reason");
+                                node.setAuditResult(reason);
+                                userCaseService.updateUserCase(node);
+                            }
+                        } else {
+                            String errcode = null;
+                            String message = null;
+                            //如果客户取消授权或其他微信问题
+                            if (auditStatus.has("errcode")) {
+                                errcode = auditStatus.get("errcode") + "";
+                                if (!errcode.equals("0")) {
+                                    //遍历返回码获得错误信息文本
+                                    message = propertiesUtils.getProperties(errcode);
+                                    logger.info("微信错误信息:" + message);
+                                    //其他错误信息
+                                    if (StringUtils.isEmpty(message)) {
+                                        message = (String) auditStatus.get("errmsg");
+                                    }
+
+                                }
+                                node.setAuditResult(message);
+                                node.setPublishStatus(PublishStatus.AUDITFAILED);
+                                userCaseService.updateUserCase(node);
+                            }
+                        }
+                    }
+                }
 
         } catch (Exception e) {
-            logger.error(e);
-            // 返回失败标志及信息
-            return Error.APPSERVER;
+            logger.info("异常", e);
         }
+
+        Map<String, Object> pageParam = new HashMap<>();
+        int totalSize = userCaseService.getUserCaseByConditionCount(userCase, contact, startTime, endTime, status);
+        int totalPage = totalSize % pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize + 1);
+        pageParam.put("totalSize", totalSize);
+        pageParam.put("totalPage", totalPage);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("userCases", list);
+        resultMap.put("pageParam", pageParam);
+        return Success.SUCCESS(resultMap);
 
     }
 

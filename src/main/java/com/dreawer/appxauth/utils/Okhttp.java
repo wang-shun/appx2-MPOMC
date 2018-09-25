@@ -59,6 +59,7 @@ public class Okhttp {
         return responseStr;
     }
 
+
     /**
      * 异步的Get请求
      *
@@ -222,6 +223,46 @@ public class Okhttp {
         } else {
             return Success.SUCCESS(accessToken);
         }
+    }
+
+    /**
+     * 获取QRcode
+     *
+     * @param url url
+     */
+    public String getQRcode(String url) throws IOException {
+        // 创建OKHttpClient对象
+        OkHttpClient okHttpClient = new OkHttpClient();
+        // 创建一个Request
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        // 返回值为response
+        Response response = call.execute();
+        String codeUrl = null;
+        if (response.isSuccessful()) {
+            byte[] bytes = response.body().bytes();
+            UploadImage(bytes);
+        }
+        return codeUrl;
+
+    }
+
+    public void UploadImage(byte[] file) throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", "2.jpg", RequestBody.create(MediaType.parse("image/png"), file))
+                .build();
+        Request request = new Request.Builder()
+                .url("https://image.dreawer.com/uploadImage?appname=APPX&type=IMAGE")
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        // 返回值为response
+        Response response = call.execute();
+        logger.info(response.body().toString());
     }
 
 }
