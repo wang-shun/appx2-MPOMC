@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -287,33 +288,33 @@ public class CaseController extends BaseController {
 
             List<UserCase> list = userCaseService.findAllUserCaseByCondition(userCase, contact, startTime, endTime, start, pageSize, status);
 
-//            for (UserCase node : list) {
-//                if (node.getPublishStatus().equals(PublishStatus.PENDING)) {
-//                    String appId = node.getAppId();
-//                    if (appId != null) {
-//                        String response = appManager.getLatestAuditStatus(appId);
-//                        JSONObject auditStatus = new JSONObject(response);
-//                        if (auditStatus.has("status")) {
-//                            if (auditStatus.getInt("status") == 0) {
-//                                node.setPublishStatus(PublishStatus.UNPUBLISHED);
-//                                node.setAuditResult("审核通过");
-//                                userCaseService.updateUserCase(node);
-//                            } else if (auditStatus.getInt("status") == 1) {
-//                                node.setPublishStatus(PublishStatus.AUDITFAILED);
-//                                String reason = auditStatus.getString("reason");
-//                                node.setAuditResult(reason);
-//                                userCaseService.updateUserCase(node);
-//                            }
-//                        } else {
-//                            //如果客户取消授权或其他微信问题
-//                            String errmsg = auditStatus.getString("errmsg");
-//                            node.setAuditResult(errmsg);
-//                            node.setPublishStatus(PublishStatus.AUDITFAILED);
-//                            userCaseService.updateUserCase(node);
-//                        }
-//                    }
-//                }
-//            }
+            for (UserCase node : list) {
+                if (node.getPublishStatus().equals(PublishStatus.PENDING)) {
+                    String appId = node.getAppId();
+                    if (appId != null) {
+                        String response = appManager.getLatestAuditStatus(appId);
+                        JSONObject auditStatus = new JSONObject(response);
+                        if (auditStatus.has("status")) {
+                            if (auditStatus.getInt("status") == 0) {
+                                node.setPublishStatus(PublishStatus.UNPUBLISHED);
+                                node.setAuditResult("审核通过");
+                                userCaseService.updateUserCase(node);
+                            } else if (auditStatus.getInt("status") == 1) {
+                                node.setPublishStatus(PublishStatus.AUDITFAILED);
+                                String reason = auditStatus.getString("reason");
+                                node.setAuditResult(reason);
+                                userCaseService.updateUserCase(node);
+                            }
+                        } else {
+                            //如果客户取消授权或其他微信问题
+                            String errmsg = auditStatus.getString("errmsg");
+                            node.setAuditResult(errmsg);
+                            node.setPublishStatus(PublishStatus.AUDITFAILED);
+                            userCaseService.updateUserCase(node);
+                        }
+                    }
+                }
+            }
 
             Map<String, Object> pageParam = new HashMap<>();
             int totalSize = userCaseService.getUserCaseByConditionCount(userCase, contact, startTime, endTime, status);
